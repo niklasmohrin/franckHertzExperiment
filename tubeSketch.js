@@ -35,7 +35,7 @@ const tubeSketch = function(p) {
 		);
 
 		p.stroke(ELECTRON_COLOR);
-		p.strokeWeight(ELECTRON_RADIUS + 10);
+		p.strokeWeight(ELECTRON_RADIUS);
 		p.fill(ELECTRON_COLOR);
 
 		for (let e of electrons) {

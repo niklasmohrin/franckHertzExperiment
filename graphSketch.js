@@ -1,5 +1,8 @@
 // p5.js sketch file for the graph
 
+const GRAPH_STROKE = "blue";
+const GRAPH_SW = 2;
+
 const graphSketch = function(p) {
 	p.reset = () => {
 		p.noLoop();
@@ -8,8 +11,8 @@ const graphSketch = function(p) {
 		p.graphCnv.id("graph-canvas");
 
 		p.background(0);
-		p.stroke(ELECTRON_COLOR);
-		p.strokeWeight(ELECTRON_RADIUS);
+		p.stroke(GRAPH_STROKE);
+		p.strokeWeight(GRAPH_SW);
 		p.noFill();
 	};
 

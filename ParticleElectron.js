@@ -1,5 +1,5 @@
 const ELECTRON_RADIUS = 2; //px
-const ELECTRON_COLOR = "640ac8";
+const ELECTRON_COLOR = "#4e27b2"; //"#640ac8";
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 
