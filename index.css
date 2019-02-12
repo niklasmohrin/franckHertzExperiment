@@ -1,0 +1,82 @@
+html,
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	overflow: hidden;
+	background: black;
+}
+
+.container {
+	padding: 1%;
+	width: 100%;
+	height: 96%;
+	box-sizing: inherit;
+	border: solid white 2px;
+	border-radius: 0.5rem;
+	overflow: hidden;
+	float: left;
+	text-align: center;
+}
+
+.container * {
+	text-align: center;
+	margin: auto;
+}
+
+#upper-container {
+	display: block;
+	height: 60%;
+	padding: 1%;
+	margin: 0;
+}
+
+#lower-container {
+	display: block;
+	height: 40%;
+	padding: 1%;
+	margin: 0;
+}
+
+#tube-container {
+	min-width: 460px;
+	min-height: 208px;
+	height: 100%;
+	width: 100%;
+}
+
+#graph-container {
+	/* display: inline; */
+	display: inline-block;
+	width: 50%;
+	height: 100%;
+}
+
+#controls-container {
+	/* display: inline; */
+	display: inline-block;
+	width: 50%;
+	height: 100%;
+}
+
+#controls-container .input-group {
+	display: block;
+	width: 80%;
+	height: 50%;
+}
+
+#controls-container .input-group input {
+	display: block;
+	margin-bottom: 10%;
+	width: 80%;
+	height: auto;
+}
+
+#controls-container .input-group label {
+	display: block;
+	margin-top: 5%;
+	color: white;
+	font-size: 130%;
+}

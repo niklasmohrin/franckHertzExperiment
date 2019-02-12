@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Franck Hertz Versuch</title>
+		<link rel="stylesheet" href="index.css" />
+	</head>
+	<body>
+		<div id="upper-container" class="container">
+			<div id="tube-canvas-container" class="container"></div>
+		</div>
+		<div id="lower-container" class="container">
+			<div id="graph-container" class="container">
+				<div id="graph-canvas-container" class="container"></div>
+			</div>
+
+			<div id="controls-container" class="container">
+				<div class="input-group">
+					<label for="filament">Filament Voltage</label>
+					<input
+						type="range"
+						min="0"
+						max="1"
+						step="0.0001"
+						id="filament"
+						class="control"
+					/>
+				</div>
+				<div class="input-group">
+					<label for="grid">Grid Voltage</label>
+					<input
+						type="range"
+						min="0"
+						max="1"
+						step="0.00001"
+						id="grid"
+						class="control"
+					/>
+				</div>
+			</div>
+		</div>
+
+		<!-- Util functions -->
+		<script>
+			const map = (val, xmin, xmax, ymin, ymax) =>
+				((val - xmin) / (xmax - xmin)) * (ymax - ymin) + ymin;
+		</script>
+
+		<!-- Import p5.js -->
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
+
+		<script src="ParticleElectron.js"></script>
+
+		<script>
+			// Set Canvas constants
+			// const TUBE_WIDTH = 460;
+			// const TUBE_HEIGHT = 110 + 98;
+
+			// const GRAPH_WIDTH = 200;
+			// const GRAPH_HEIGHT = 200;
+
+			// Set ranges for inputs
+			const filamentInput = document.getElementById("filament");
+			const gridInput = document.getElementById("grid");
+
+			const FILAMENT_MAX = 10;
+			const GRID_MAX = 30;
+
+			filamentInput.setAttribute("max", FILAMENT_MAX);
+			gridInput.setAttribute("max", GRID_MAX);
+
+			const GRID_LENGTH = 1;
+
+			// electron spawning area
+			let eSpawnWidth = 40;
+			let eSpawnHeight = 70;
+			let eSpawnStartX = 80;
+			let eSpawnStartY = 25;
+
+			// manage electrons
+			filamentInput.addEventListener("input", e => {
+				newEProb = e.target.value / 20;
+				// TODO: add realistic probabilities
+				console.log("fil - change");
+				console.log(newEProb);
+			});
+
+			let uGrid = 0;
+
+			const f = U => 3 * U;
+
+			gridInput.addEventListener("input", e => {
+				uGrid = e.target.value;
+				// TODO: add f(U) to be realistic
+				drawOnGraph();
+			});
+
+			// simulation loop
+			const SIMULATION_TIMEOUT = 10; // ms
+
+			let electrons = [];
+
+			const simulation = () => {
+				if (Math.random() < newEProb) electrons.push(new ParticleElectron());
+
+				const curForce = (ELECTRON_CHARGE * window.uGrid) / GRID_LENGTH;
+				for (let e of electrons) {
+					e.applyForce(curForce);
+					e.update();
+				}
+			};
+
+			let simulationInterval = setInterval(simulation, SIMULATION_TIMEOUT);
+		</script>
+
+		<script src="tubeSketch.js"></script>
+		<script src="graphSketch.js"></script>
+
+		<script>
+			// Handling resize events
+			// only exectutes 250ms after last event
+			let resizeTimer;
+
+			window.addEventListener("resize", () => {
+				clearTimeout(resizeTimer);
+				resizeTimer = setTimeout(() => {
+					console.log("resize");
+					tubeP5.reset();
+					graphP5.reset();
+				}, 250);
+			});
+		</script>
+	</body>
+</html>
