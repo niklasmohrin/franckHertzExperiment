@@ -1,2 +1,2 @@
-# Frank Hertz Versuch
-Simulation of the Quantum Physic experiment by Frank Hertz.
+# Franck Hertz Versuch
+Simulation of the Quantum Physic experiment by Franck Hertz.
