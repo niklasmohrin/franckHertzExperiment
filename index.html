@@ -7,7 +7,9 @@
 	</head>
 	<body>
 		<div id="upper-container" class="container">
-			<div id="tube-canvas-container" class="container"></div>
+			<div id="tube-canvas-container" class="container">
+				<img src="assets/tube_full.png" id="tube-img" />
+			</div>
 		</div>
 		<div id="lower-container" class="container">
 			<div id="graph-container" class="container">
@@ -79,12 +81,13 @@
 			let eSpawnStartX = 80;
 			let eSpawnStartY = 25;
 
+			// TODO: implement spawn area adapation to screen size change
+
 			// manage electrons
 			filamentInput.addEventListener("input", e => {
-				newEProb = e.target.value / 20;
+				newEProb = filamentInput.value / 20;
 				// TODO: add realistic probabilities
-				console.log("fil - change");
-				console.log(newEProb);
+				console.log("fil - change", newEProb);
 			});
 
 			let uGrid = 0;
@@ -105,9 +108,10 @@
 			const simulation = () => {
 				if (Math.random() < newEProb) electrons.push(new ParticleElectron());
 
-				const curForce = (ELECTRON_CHARGE * window.uGrid) / GRID_LENGTH;
+				const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH;
+				// console.log(curForce);
 				for (let e of electrons) {
-					e.applyForce(curForce);
+					e.applyForce(curForce, 0);
 					e.update();
 				}
 			};

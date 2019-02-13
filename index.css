@@ -40,11 +40,27 @@ body {
 	margin: 0;
 }
 
-#tube-container {
+#tube-canvas-container {
 	min-width: 460px;
 	min-height: 208px;
 	height: 100%;
 	width: 100%;
+	position: relative;
+}
+
+#tube-canvas-container #tube-img,
+#tube-canvas-container #tube-canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	border: none;
+	width: 100%;
+	height: 100%;
+}
+
+#tube-canvas-container #tube-canvas {
+	background: transparent;
+	z-index: 5;
 }
 
 #graph-container {

@@ -3,6 +3,8 @@ const ELECTRON_COLOR = "#4e27b2"; //"#640ac8";
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 
+const VEL_DIV = 1e13;
+
 let newEProb = 0;
 
 class ParticleElectron {
@@ -18,29 +20,31 @@ class ParticleElectron {
 	}
 }
 
-ParticleElectron.prototype.getAbs = () =>
+ParticleElectron.prototype.getAbs = function() {
 	Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+};
 
-ParticleElectron.prototype.update = () => {
+ParticleElectron.prototype.update = function() {
 	this.vx += this.ax;
 	this.vy += this.ay;
 
 	this.ax = this.ay = 0;
 
-	this.x += this.vx;
-	this.y += this.vy;
+	this.x += this.vx / VEL_DIV;
+	this.y += this.vy / VEL_DIV;
 };
 
-ParticleElectron.prototype.accelerate = (_ax, _ay) => {
+ParticleElectron.prototype.accelerate = function(_ax, _ay) {
 	this.ax += _ax;
 	this.ay += _ay;
 };
 
-ParticleElectron.prototype.applyForce = (_fx, _fy) => {
+ParticleElectron.prototype.applyForce = function(_fx, _fy) {
 	// this.accelerate(_fx / ELECTRON_MASS, _fy / ELECTRON_MASS);
 	this.ax += _fx / ELECTRON_MASS;
 	this.ay += _fy / ELECTRON_MASS;
 };
 
-ParticleElectron.prototype.getE = () =>
-	0.5 * ELECTRON_MASS * (this.vx * this.vx + this.vy * this.vy);
+ParticleElectron.prototype.getE = function() {
+	return 0.5 * ELECTRON_MASS * (this.vx * this.vx + this.vy * this.vy);
+};

@@ -31,9 +31,9 @@ const drawOnGraph = () => {
 		Math.floor(map(uGrid, 0, GRID_MAX, 0, graphP5.width)),
 		Math.floor(map(f(uGrid), 0, f(GRID_MAX), graphP5.height, 0))
 	);
-	console.log(
-		"drew point at",
-		map(uGrid, 0, GRID_MAX, 0, graphP5.width),
-		map(f(uGrid), 0, f(GRID_MAX), graphP5.height, 0)
-	);
+	// console.log(
+	// 	"drew point at",
+	// 	map(uGrid, 0, GRID_MAX, 0, graphP5.width),
+	// 	map(f(uGrid), 0, f(GRID_MAX), graphP5.height, 0)
+	// );
 };

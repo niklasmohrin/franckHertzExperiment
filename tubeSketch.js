@@ -2,10 +2,11 @@
 
 const tubeSketch = function(p) {
 	p.preload = () => {
-		console.log("loadings imgs");
-		p.tubeImg = p.loadImage("assets/tube.png");
-		p.circuitImg = p.loadImage("assets/schaltung.png");
-		console.log("done loading imgs");
+		// replaced with html img tag
+		// console.log("loadings imgs");
+		// p.tubeImg = p.loadImage("assets/tube.png");
+		// p.circuitImg = p.loadImage("assets/schaltung.png");
+		// console.log("done loading imgs");
 	};
 
 	p.reset = () => {
@@ -24,15 +25,17 @@ const tubeSketch = function(p) {
 	};
 
 	p.draw = () => {
-		p.background(0);
-		p.image(p.tubeImg, 0, 0, p.width, (p.height * 110) / 208);
-		p.image(
-			p.circuitImg,
-			0,
-			(p.height * 110) / 208,
-			p.width,
-			(p.height * 98) / 208
-		);
+		p.clear();
+		// replaced with html img tag
+
+		// p.image(p.tubeImg, 0, 0, p.width, (p.height * 110) / 208);
+		// p.image(
+		// 	p.circuitImg,
+		// 	0,
+		// 	(p.height * 110) / 208,
+		// 	p.width,
+		// 	(p.height * 98) / 208
+		// );
 
 		p.stroke(ELECTRON_COLOR);
 		p.strokeWeight(ELECTRON_RADIUS);
