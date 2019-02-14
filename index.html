@@ -42,26 +42,10 @@
 			</div>
 		</div>
 
-		<!-- Util functions -->
+		<!-- Util functions, constants, inputs -->
 		<script>
 			const map = (val, xmin, xmax, ymin, ymax) =>
 				((val - xmin) / (xmax - xmin)) * (ymax - ymin) + ymin;
-		</script>
-
-		<!-- Import p5.js -->
-
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
-
-		<script src="ParticleElectron.js"></script>
-
-		<script>
-			// Set Canvas constants
-			// const TUBE_WIDTH = 460;
-			// const TUBE_HEIGHT = 110 + 98;
-
-			// const GRAPH_WIDTH = 200;
-			// const GRAPH_HEIGHT = 200;
 
 			// Set ranges for inputs
 			const filamentInput = document.getElementById("filament");
@@ -75,48 +59,122 @@
 
 			const GRID_LENGTH = 1;
 
+			// tube: 460px * 208px
+
 			// electron spawning area
 			let eSpawnWidth = 40;
 			let eSpawnHeight = 70;
 			let eSpawnStartX = 80;
 			let eSpawnStartY = 25;
 
-			// TODO: implement spawn area adapation to screen size change
+			// tube / electron despawn area
+			let eLeftBound = 57;
+			let eRightBound = 393;
+			let eTopBound = 11;
+			let eBottomBound = 105;
 
-			// manage electrons
+			// electron constants
+			const ELECTRON_RADIUS = 2; //px
+			const ELECTRON_COLOR = "#4e27b2"; //"#640ac8";
+			const ELECTRON_MASS = 9e-31;
+			const ELECTRON_CHARGE = 1.6e-19;
+
+			// const ELECTRON_LIFETIME = 10000;
+
+			const VEL_DIV = 1e13;
+
+			// energy constraints (Quecksilber)
+			const energyLowerBound = 4.7 * ELECTRON_CHARGE;
+			const energyUpperBound = 5.3 * ELECTRON_CHARGE;
+
+			const glowEnergy = 4.7 * ELECTRON_CHARGE;
+
+			// handle inputs
+			let newEProb = 0;
 			filamentInput.addEventListener("input", e => {
 				newEProb = filamentInput.value / 20;
 				// TODO: add realistic probabilities
-				console.log("fil - change", newEProb);
+				// console.log("fil - change", newEProb);
 			});
 
 			let uGrid = 0;
 
 			const f = U => 3 * U;
+			// TODO: add f(U) to be realistic
 
 			gridInput.addEventListener("input", e => {
 				uGrid = e.target.value;
-				// TODO: add f(U) to be realistic
 				drawOnGraph();
 			});
 
 			// simulation loop
-			const SIMULATION_TIMEOUT = 10; // ms
+			const SIMULATION_TIMEOUT_MS = 20; // ms
+			const SIMULATION_TIMEOUT = SIMULATION_TIMEOUT_MS / 1000;
+			// const TIME_STRETCH = 5e11;
 
 			let electrons = [];
+		</script>
 
+		<!-- Import p5.js -->
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
+
+		<!-- Import ParticleElectron.js -->
+		<script src="ParticleElectron.js"></script>
+
+		<!-- Simulation -->
+		<script>
+			let prevTime;
 			const simulation = () => {
-				if (Math.random() < newEProb) electrons.push(new ParticleElectron());
+				const curTime = Date.now();
+				const elapsedTime = curTime - prevTime;
+				if (Math.random() < newEProb) {
+					console.log("push");
+					electrons.push(new ParticleElectron());
+				}
 
 				const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH;
 				// console.log(curForce);
-				for (let e of electrons) {
-					e.applyForce(curForce, 0);
-					e.update();
+				let toRemove = [];
+
+				for (let i = electrons.length - 1; i > -1; i--) {
+					// e.loops++;
+					// if (e.loops < ELECTRON_LIFETIME) {
+					const e = electrons[i];
+					if (
+						// e.alive &&
+						e.x < eRightBound &&
+						e.x > eLeftBound &&
+						e.y < eBottomBound &&
+						e.y > eTopBound
+					) {
+						e.applyForce(curForce, 0, elapsedTime);
+						e.update();
+
+						const energy = e.getE();
+						console.log(energy);
+						if (energy > energyLowerBound && energy < energyUpperBound) {
+							tubeP5.glow(e.x, e.y);
+							// e.vx -= sqrt((2 * (energy - glowEnergy)) / ELECTRON_MASS);
+							// e.vy -= sqrt((2 * (energy - glowEnergy)) / ELECTRON_MASS);
+						}
+					} else {
+						toRemove.push(i);
+					}
 				}
+
+				for (let index of toRemove) {
+					console.log("pop");
+					electrons.pop(index);
+				}
+
+				prevTime = Date.now();
 			};
 
-			let simulationInterval = setInterval(simulation, SIMULATION_TIMEOUT);
+			prevTime = Date.now();
+
+			let simulationInterval = setInterval(simulation, SIMULATION_TIMEOUT_MS);
 		</script>
 
 		<script src="tubeSketch.js"></script>

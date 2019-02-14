@@ -15,7 +15,36 @@ const tubeSketch = function(p) {
 		p.tubeCnv.parent(p.parent);
 		p.tubeCnv.id("tube-canvas");
 
+		eSpawnWidth = (40 * p.parent.clientWidth) / 460;
+		eSpawnHeight = (70 * p.parent.clientHeight) / 208;
+		eSpawnStartX = (80 * p.parent.clientWidth) / 460;
+		eSpawnStartY = (25 * p.parent.clientHeight) / 208;
+
+		eLeftBound = (57 * p.parent.clientWidth) / 460;
+		eRightBound = (393 * p.parent.clientWidth) / 460;
+		eTopBound = (11 * p.parent.clientHeight) / 208;
+		eBottomBound = (105 * p.parent.clientHeight) / 208;
+
+		// eSpawnWidth *= p.parent.clientWidth / p.prevWidth;
+		// eSpawnStartX *= p.parent.clientWidth / p.prevWidth;
+		// eSpawnHeight *= p.parent.clientHeight / p.prevHeight;
+		// eSpawnStartY *= p.parent.clientHeight / p.prevHeight;
+
+		// eLeftBound *= p.parent.clientWidth / p.prevWidth;
+		// eRightBound *= p.parent.clientWidth / p.prevWidth;
+		// eTopBound *= p.parent.clientHeight / p.prevHeight;
+		// eBottomBound *= p.parent.clientHeight / p.prevHeight;
+
+		electrons.forEach(e => {
+			e.x *= p.parent.clientWidth / p.prevWidth;
+			e.y *= p.parent.clientHeight / p.prevHeight;
+		});
+
+		p.prevWidth = p.parent.clientWidth;
+		p.prevHeight = p.parent.clientHeight;
+
 		p.background(0);
+		p.frameRate(50);
 		p.loop();
 	};
 
@@ -44,6 +73,10 @@ const tubeSketch = function(p) {
 		for (let e of electrons) {
 			p.point(e.x, e.y);
 		}
+	};
+
+	p.glow = (x, y) => {
+		console.log("glow");
 	};
 };
 

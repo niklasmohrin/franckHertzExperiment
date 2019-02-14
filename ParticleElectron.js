@@ -1,12 +1,3 @@
-const ELECTRON_RADIUS = 2; //px
-const ELECTRON_COLOR = "#4e27b2"; //"#640ac8";
-const ELECTRON_MASS = 9e-31;
-const ELECTRON_CHARGE = 1.6e-19;
-
-const VEL_DIV = 1e13;
-
-let newEProb = 0;
-
 class ParticleElectron {
 	constructor(_x, _y, _vx, _vy, _ax, _ay) {
 		this.x = _x || Math.floor(Math.random() * eSpawnWidth) + eSpawnStartX;
@@ -17,6 +8,14 @@ class ParticleElectron {
 
 		this.ax = _ax || 0;
 		this.ay = _ay || 0;
+
+		// this.alive = true;
+
+		// // this.loops = 0;
+
+		// setTimeout(() => {
+		// 	this.alive = false;
+		// }, ELECTRON_LIFETIME);
 	}
 }
 
@@ -30,8 +29,8 @@ ParticleElectron.prototype.update = function() {
 
 	this.ax = this.ay = 0;
 
-	this.x += this.vx / VEL_DIV;
-	this.y += this.vy / VEL_DIV;
+	this.x += this.vx;
+	this.y += this.vy;
 };
 
 ParticleElectron.prototype.accelerate = function(_ax, _ay) {
@@ -39,10 +38,10 @@ ParticleElectron.prototype.accelerate = function(_ax, _ay) {
 	this.ay += _ay;
 };
 
-ParticleElectron.prototype.applyForce = function(_fx, _fy) {
+ParticleElectron.prototype.applyForce = function(_fx, _fy, elapsedTime) {
 	// this.accelerate(_fx / ELECTRON_MASS, _fy / ELECTRON_MASS);
-	this.ax += _fx / ELECTRON_MASS;
-	this.ay += _fy / ELECTRON_MASS;
+	this.ax += (_fx / ELECTRON_MASS) * elapsedTime;
+	this.ay += (_fy / ELECTRON_MASS) * elapsedTime;
 };
 
 ParticleElectron.prototype.getE = function() {
