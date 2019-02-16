@@ -34,7 +34,7 @@
 						type="range"
 						min="0"
 						max="1"
-						step="0.00001"
+						step="0.0000001"
 						id="grid"
 						class="control"
 					/>
@@ -99,7 +99,8 @@
 
 			let uGrid = 0;
 
-			const f = U => 3 * U;
+			const f = U =>
+				Math.sin(map(U % 4.7, 0, 4.7, 0, (5 / 6) * Math.PI)) * Math.exp(U / 20);
 			// TODO: add f(U) to be realistic
 
 			gridInput.addEventListener("input", e => {
@@ -134,7 +135,7 @@
 					electrons.push(new ParticleElectron());
 				}
 
-				const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH;
+				const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e10;
 				// console.log(curForce);
 				let toRemove = [];
 
