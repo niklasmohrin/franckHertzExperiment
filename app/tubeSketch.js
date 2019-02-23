@@ -68,7 +68,14 @@ const tubeSketch = function(p) {
 		p.fill(ELECTRON_COLOR);
 
 		for (let e of electrons) {
-			p.point(e.x, e.y);
+			if (
+				e.x < eRightBound &&
+				e.x > eLeftBound &&
+				e.y < eBottomBound &&
+				e.y > eTopBound
+			) {
+				p.point(e.x, e.y);
+			}
 		}
 
 		p.noStroke();

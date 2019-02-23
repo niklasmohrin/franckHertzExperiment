@@ -24,6 +24,7 @@
 						min="0"
 						max="1"
 						step="0.0001"
+						value="0"
 						id="filament"
 						class="control"
 					/>
@@ -35,6 +36,7 @@
 						min="0"
 						max="1"
 						step="0.0000001"
+						value="0"
 						id="grid"
 						class="control"
 					/>
@@ -42,25 +44,32 @@
 			</div>
 		</div>
 
-		<!-- Util functions, constants, inputs -->
+		<!-- util functions, constants, inputs -->
 		<script>
+			// util functions ///////////////////////////////////////////////////////
 			const map = (val, xmin, xmax, ymin, ymax) =>
 				((val - xmin) / (xmax - xmin)) * (ymax - ymin) + ymin;
 
-			// Set ranges for inputs
+			const rand = (start, end) =>
+				Math.floor(Math.random() * (end - start)) + start;
+
+			/////////////////////////////////////////////////////////////////////////
+
+			// Set ranges for inputs ////////////////////////////////////////////////
 			const filamentInput = document.getElementById("filament");
 			const gridInput = document.getElementById("grid");
 
 			const FILAMENT_MAX = 10;
-			const GRID_MAX = 30;
+			const GRID_MAX = 15;
 
 			filamentInput.setAttribute("max", FILAMENT_MAX);
 			gridInput.setAttribute("max", GRID_MAX);
 
-			const GRID_LENGTH = 1;
+			/////////////////////////////////////////////////////////////////////////
+
+			// constants ////////////////////////////////////////////////////////////
 
 			// tube: 460px * 208px
-
 			// electron spawning area
 			let eSpawnWidth = 40;
 			let eSpawnHeight = 70;
@@ -75,6 +84,7 @@
 
 			// grid position
 			let gridX = 315;
+			const GRID_LENGTH = 1;
 
 			// electron constants
 			const ELECTRON_RADIUS = 2; //px
@@ -83,28 +93,26 @@
 			const ELECTRON_CHARGE = 1.6e-19;
 			const MAX_ELECTRONS = 200;
 
-			// const ELECTRON_LIFETIME = 10000;
-
 			// glow constants
 			const GLOW_COLOR = "#ed6517";
 			const GLOW_RADIUS = 30;
 			const GLOW_FADE = 10;
-			const COLLISION_PROB = 5e-1;
 
-			const VEL_DIV = 1e13;
+			// glow area constants
+			const GLOW_OFFSET = 0.4;
+			const GLOW_DISTANCE = 4.9;
+			const GLOW_ERROR = 0.3;
+			const MIN_GLOWS = 2;
+			const MAX_GLOWS = 10;
+			let GLOW_PROB = 0; // changes with filament voltage
 
-			// energy constraints (Quecksilber)
-			const energyLowerBound = 4.7 * ELECTRON_CHARGE;
-			const energyUpperBound = 5.3 * ELECTRON_CHARGE;
+			/////////////////////////////////////////////////////////////////////////
 
-			const glowEnergy = 4.7 * ELECTRON_CHARGE;
-
-			// handle inputs
+			// handle inputs ////////////////////////////////////////////////////////
 			let newEProb = 0;
 			filamentInput.addEventListener("input", e => {
 				newEProb = filamentInput.value / 20;
-				// TODO: add realistic probabilities
-				// console.log("fil - change", newEProb);
+				GLOW_PROB = filamentInput.value * 0.5e-2;
 			});
 
 			let uGrid = 0;
@@ -118,12 +126,15 @@
 				drawOnGraph();
 			});
 
-			// simulation loop
+			/////////////////////////////////////////////////////////////////////////
+
+			// simulation loop //////////////////////////////////////////////////////
 			const SIMULATION_TIMEOUT_MS = 10; // ms
 			const SIMULATION_TIMEOUT = SIMULATION_TIMEOUT_MS / 1000;
 			// const TIME_STRETCH = 5e11;
 
 			let electrons = [];
+			/////////////////////////////////////////////////////////////////////////
 		</script>
 
 		<!-- Import p5.js -->
@@ -136,63 +147,74 @@
 
 		<!-- Simulation -->
 		<script>
-			let prevTime;
 			const simulation = () => {
-				// const curTime = Date.now();
-				// const elapsedTime = curTime - prevTime;
+				// adds an electron sometimes
 				if (Math.random() < newEProb && electrons.length < MAX_ELECTRONS) {
-					// console.log("push");
 					electrons.push(new ParticleElectron());
 				}
 
+				// TODO: simplyfiy
 				const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e12;
-				// console.log(curForce);
-				let toRemove = [];
 
+				// let toRemove = [];
 				for (let i = electrons.length - 1; i > -1; i--) {
-					// e.loops++;
-					// if (e.loops < ELECTRON_LIFETIME) {
 					const e = electrons[i];
-					if (
-						// e.alive &&
-						e.x < eRightBound &&
-						e.x > eLeftBound &&
-						e.y < eBottomBound &&
-						e.y > eTopBound
-					) {
-						// const energy = e.getE();
-						const energy =
-							ELECTRON_CHARGE *
-							(map(e.x, eSpawnStartX, gridX, 0, uGrid) - e.collisions * 4.9);
-						// console.log(energy);
-						if (
-							energy > energyLowerBound &&
-							energy < energyUpperBound &&
-							e.x < gridX &&
-							Math.random() < COLLISION_PROB
-						) {
-							tubeP5.glow(e.x, e.y);
-							e.collisions += 1;
-							e.subtractEnergy(energy);
-						}
 
-						if (e.x < gridX) e.applyForce(curForce, 0);
-						e.update();
-					} else {
-						toRemove.push(i);
+					// accelerate if not behind grid
+					if (e.x < gridX) e.applyForce(curForce, 0);
+					// always update
+					e.update();
+
+					// bounds checking, remove if out of bounds
+					if (
+						e.x > eRightBound ||
+						e.x < eLeftBound ||
+						e.y > eBottomBound ||
+						e.y < eTopBound
+					) {
+						// toRemove.push(i);
+						electrons.pop(i);
 					}
 				}
 
-				toRemove.forEach(index => electrons.pop(index));
+				// remove all electrons that were marked
+				// toRemove.forEach(index => electrons.pop(index));
 
-				// prevTime = Date.now();
+				// delete toRemove array
+				delete toRemove;
+
+				// calculate glow areas and add glow points
+				// starting at first area
+				let curArea = GLOW_OFFSET + GLOW_DISTANCE;
+				// glow energy cannot surpass grid voltage
+				while (curArea < uGrid) {
+					// random number of effects, between MIN_GLOWS and MAX_GLOWS
+					for (let i = 0; i < rand(MIN_GLOWS, MAX_GLOWS); i++) {
+						if (Math.random() < GLOW_PROB) {
+							// calculate glow position
+							const x = map(
+								curArea + rand(-GLOW_ERROR, GLOW_ERROR),
+								0,
+								uGrid,
+								eSpawnStartX,
+								gridX
+							);
+							const y = rand(eSpawnStartY, eSpawnStartY + eSpawnHeight);
+							// schedule glow effect
+							tubeP5.glow(x, y);
+						}
+					}
+
+					// move on to the next area
+					curArea += GLOW_DISTANCE;
+				}
 			};
 
-			prevTime = Date.now();
-
+			// scheduling the simulation interval
 			let simulationInterval = setInterval(simulation, SIMULATION_TIMEOUT_MS);
 		</script>
 
+		<!-- importing and running the p5 sketches -->
 		<script src="tubeSketch.js"></script>
 		<script src="graphSketch.js"></script>
 
