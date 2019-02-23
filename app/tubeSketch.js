@@ -79,7 +79,6 @@ const tubeSketch = function(p) {
 		}
 
 		p.noStroke();
-		// p.fill(GLOW_COLOR);
 		const c = p.color(GLOW_COLOR);
 
 		let toRemove = [];
