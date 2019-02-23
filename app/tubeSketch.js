@@ -1,14 +1,7 @@
+// tubeSketch.js
 // p5.js sketch file for the tube
 
 const tubeSketch = function(p) {
-	p.preload = () => {
-		// replaced with html img tag
-		// console.log("loadings imgs");
-		// p.tubeImg = p.loadImage("assets/tube.png");
-		// p.circuitImg = p.loadImage("assets/schaltung.png");
-		// console.log("done loading imgs");
-	};
-
 	p.reset = () => {
 		p.noLoop();
 		p.tubeCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
@@ -27,16 +20,6 @@ const tubeSketch = function(p) {
 
 		gridX = (315 * p.parent.clientWidth) / 460;
 
-		// eSpawnWidth *= p.parent.clientWidth / p.prevWidth;
-		// eSpawnStartX *= p.parent.clientWidth / p.prevWidth;
-		// eSpawnHeight *= p.parent.clientHeight / p.prevHeight;
-		// eSpawnStartY *= p.parent.clientHeight / p.prevHeight;
-
-		// eLeftBound *= p.parent.clientWidth / p.prevWidth;
-		// eRightBound *= p.parent.clientWidth / p.prevWidth;
-		// eTopBound *= p.parent.clientHeight / p.prevHeight;
-		// eBottomBound *= p.parent.clientHeight / p.prevHeight;
-
 		electrons.forEach(e => {
 			e.x *= p.parent.clientWidth / p.prevWidth;
 			e.y *= p.parent.clientHeight / p.prevHeight;
@@ -47,9 +30,6 @@ const tubeSketch = function(p) {
 
 		p.background(0);
 		p.frameRate(50);
-
-		// p.glowCnv = p.createGraphics(p.width, p.height);
-		// p.glowCnv.noStroke();
 
 		p.loop();
 	};

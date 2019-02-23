@@ -1,3 +1,4 @@
+// graphSketch.js
 // p5.js sketch file for the graph
 
 const GRAPH_STROKE = "blue";

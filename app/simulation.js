@@ -1,3 +1,5 @@
+// simulation.js
+
 const simulation = () => {
 	// adds an electron sometimes
 	if (Math.random() < newEProb && electrons.length < MAX_ELECTRONS) {
@@ -7,12 +9,13 @@ const simulation = () => {
 	// TODO: simplyfiy
 	const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e12;
 
-	// let toRemove = [];
 	for (let i = electrons.length - 1; i > -1; i--) {
 		const e = electrons[i];
 
 		// accelerate if not behind grid
-		if (e.x < gridX) e.applyForce(curForce, 0);
+		if (e.x < gridX) {
+			e.applyForce(curForce, 0);
+		}
 		// always update
 		e.update();
 
@@ -23,16 +26,9 @@ const simulation = () => {
 			e.y > eBottomBound ||
 			e.y < eTopBound
 		) {
-			// toRemove.push(i);
 			electrons.pop(i);
 		}
 	}
-
-	// remove all electrons that were marked
-	// toRemove.forEach(index => electrons.pop(index));
-
-	// delete toRemove array
-	delete toRemove;
 
 	// calculate glow areas and add glow points
 	// starting at first area
@@ -41,7 +37,7 @@ const simulation = () => {
 	while (curArea < uGrid) {
 		// random number of effects, between MIN_GLOWS and MAX_GLOWS
 		for (let i = 0; i < rand(MIN_GLOWS, MAX_GLOWS); i++) {
-			if (Math.random() < GLOW_PROB) {
+			if (Math.random() < glowProb) {
 				// calculate glow position
 				const x = map(
 					curArea + rand(-GLOW_ERROR, GLOW_ERROR),
@@ -55,7 +51,6 @@ const simulation = () => {
 				tubeP5.glow(x, y);
 			}
 		}
-
 		// move on to the next area
 		curArea += GLOW_DISTANCE;
 	}

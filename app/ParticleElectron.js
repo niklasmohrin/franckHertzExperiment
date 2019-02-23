@@ -1,3 +1,5 @@
+// ParticleElectron.js
+
 class ParticleElectron {
 	constructor(_x, _y, _vx, _vy, _ax, _ay) {
 		this.x = _x || Math.floor(Math.random() * eSpawnWidth) + eSpawnStartX;
@@ -8,16 +10,6 @@ class ParticleElectron {
 
 		this.ax = _ax || 0;
 		this.ay = _ay || 0;
-
-		this.collisions = 0;
-
-		// this.alive = true;
-
-		// // this.loops = 0;
-
-		// setTimeout(() => {
-		// 	this.alive = false;
-		// }, ELECTRON_LIFETIME);
 	}
 }
 
