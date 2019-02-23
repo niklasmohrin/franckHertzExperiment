@@ -2,7 +2,7 @@
 
 const simulation = () => {
 	// adds an electron sometimes
-	if (Math.random() < newEProb && electrons.length < MAX_ELECTRONS) {
+	if (electrons.length < MAX_ELECTRONS && Math.random() < newEProb) {
 		electrons.push(new ParticleElectron());
 	}
 
@@ -39,13 +39,7 @@ const simulation = () => {
 		for (let i = 0; i < rand(MIN_GLOWS, MAX_GLOWS); i++) {
 			if (Math.random() < glowProb) {
 				// calculate glow position
-				const x = map(
-					curArea + rand(-GLOW_ERROR, GLOW_ERROR),
-					0,
-					uGrid,
-					eSpawnStartX,
-					gridX
-				);
+				const x = map(curArea + ranGlowError(), 0, uGrid, eSpawnStartX, gridX);
 				const y = rand(eSpawnStartY, eSpawnStartY + eSpawnHeight);
 				// schedule glow effect
 				tubeP5.glow(x, y);
