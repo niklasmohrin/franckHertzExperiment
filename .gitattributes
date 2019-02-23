@@ -1,1 +1,2 @@
 app/*.js linguist-language=JavaScript
+app/*.js linguist-vendor=false linguist-generated=false
