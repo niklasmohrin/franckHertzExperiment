@@ -1,3 +1,4 @@
 app/*.js linguist-language=JavaScript
-app/*.js linguist-vendor=false linguist-generated=false
+app/*.js linguist-vendor=false
+app/*.js linguist-generated=false
 release_builds/* linguist-generated=true
