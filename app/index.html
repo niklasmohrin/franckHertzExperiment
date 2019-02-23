@@ -73,13 +73,23 @@
 			let eTopBound = 11;
 			let eBottomBound = 105;
 
+			// grid position
+			let gridX = 315;
+
 			// electron constants
 			const ELECTRON_RADIUS = 2; //px
 			const ELECTRON_COLOR = "#4e27b2"; //"#640ac8";
 			const ELECTRON_MASS = 9e-31;
 			const ELECTRON_CHARGE = 1.6e-19;
+			const MAX_ELECTRONS = 200;
 
 			// const ELECTRON_LIFETIME = 10000;
+
+			// glow constants
+			const GLOW_COLOR = "#ed6517";
+			const GLOW_RADIUS = 30;
+			const GLOW_FADE = 10;
+			const COLLISION_PROB = 5e-1;
 
 			const VEL_DIV = 1e13;
 
@@ -109,7 +119,7 @@
 			});
 
 			// simulation loop
-			const SIMULATION_TIMEOUT_MS = 20; // ms
+			const SIMULATION_TIMEOUT_MS = 10; // ms
 			const SIMULATION_TIMEOUT = SIMULATION_TIMEOUT_MS / 1000;
 			// const TIME_STRETCH = 5e11;
 
@@ -128,14 +138,14 @@
 		<script>
 			let prevTime;
 			const simulation = () => {
-				const curTime = Date.now();
-				const elapsedTime = curTime - prevTime;
-				if (Math.random() < newEProb) {
-					console.log("push");
+				// const curTime = Date.now();
+				// const elapsedTime = curTime - prevTime;
+				if (Math.random() < newEProb && electrons.length < MAX_ELECTRONS) {
+					// console.log("push");
 					electrons.push(new ParticleElectron());
 				}
 
-				const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e10;
+				const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e12;
 				// console.log(curForce);
 				let toRemove = [];
 
@@ -150,27 +160,32 @@
 						e.y < eBottomBound &&
 						e.y > eTopBound
 					) {
-						e.applyForce(curForce, 0, elapsedTime);
-						e.update();
-
-						const energy = e.getE();
-						console.log(energy);
-						if (energy > energyLowerBound && energy < energyUpperBound) {
+						// const energy = e.getE();
+						const energy =
+							ELECTRON_CHARGE *
+							(map(e.x, eSpawnStartX, gridX, 0, uGrid) - e.collisions * 4.9);
+						// console.log(energy);
+						if (
+							energy > energyLowerBound &&
+							energy < energyUpperBound &&
+							e.x < gridX &&
+							Math.random() < COLLISION_PROB
+						) {
 							tubeP5.glow(e.x, e.y);
-							// e.vx -= sqrt((2 * (energy - glowEnergy)) / ELECTRON_MASS);
-							// e.vy -= sqrt((2 * (energy - glowEnergy)) / ELECTRON_MASS);
+							e.collisions += 1;
+							e.subtractEnergy(energy);
 						}
+
+						if (e.x < gridX) e.applyForce(curForce, 0);
+						e.update();
 					} else {
 						toRemove.push(i);
 					}
 				}
 
-				for (let index of toRemove) {
-					console.log("pop");
-					electrons.pop(index);
-				}
+				toRemove.forEach(index => electrons.pop(index));
 
-				prevTime = Date.now();
+				// prevTime = Date.now();
 			};
 
 			prevTime = Date.now();

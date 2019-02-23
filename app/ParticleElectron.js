@@ -9,6 +9,8 @@ class ParticleElectron {
 		this.ax = _ax || 0;
 		this.ay = _ay || 0;
 
+		this.collisions = 0;
+
 		// this.alive = true;
 
 		// // this.loops = 0;
@@ -38,12 +40,16 @@ ParticleElectron.prototype.accelerate = function(_ax, _ay) {
 	this.ay += _ay;
 };
 
-ParticleElectron.prototype.applyForce = function(_fx, _fy, elapsedTime) {
+ParticleElectron.prototype.applyForce = function(_fx, _fy) {
 	// this.accelerate(_fx / ELECTRON_MASS, _fy / ELECTRON_MASS);
-	this.ax += (_fx / ELECTRON_MASS) * elapsedTime;
-	this.ay += (_fy / ELECTRON_MASS) * elapsedTime;
+	this.ax += _fx / ELECTRON_MASS;
+	this.ay += _fy / ELECTRON_MASS;
 };
 
 ParticleElectron.prototype.getE = function() {
 	return 0.5 * ELECTRON_MASS * (this.vx * this.vx + this.vy * this.vy);
+};
+
+ParticleElectron.prototype.subtractEnergy = energy => {
+	this.vx -= Math.sqrt((2 * energy) / ELECTRON_MASS);
 };
