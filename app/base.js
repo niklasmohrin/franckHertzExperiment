@@ -56,9 +56,10 @@ const GLOW_FADE = 10;
 // glow area constants
 const GLOW_OFFSET = 0.4;
 const GLOW_DISTANCE = 4.9;
-const GLOW_ERROR = 5;
 const MIN_GLOWS = 2;
 const MAX_GLOWS = 10;
+const GLOW_ERROR = 0.3;
+const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
 
 /////////////////////////////////////////////////////////////////////////
 
