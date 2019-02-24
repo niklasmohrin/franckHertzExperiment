@@ -80,6 +80,7 @@ const tubeSketch = function(p) {
 		p.glows.push({
 			x,
 			y,
+			o: 1,
 			a: 255
 		});
 	};
