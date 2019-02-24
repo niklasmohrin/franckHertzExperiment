@@ -32,7 +32,7 @@ const simulation = () => {
 
 	// calculate glow areas and add glow points
 	// starting at first area
-	let curArea = GLOW_OFFSET + GLOW_DISTANCE;
+	let curArea = GLOW_OFFSET[curMaterial] + GLOW_DISTANCE[curMaterial];
 	// glow energy cannot surpass grid voltage
 	while (curArea < uGrid) {
 		// random number of effects, between MIN_GLOWS and MAX_GLOWS
@@ -46,7 +46,7 @@ const simulation = () => {
 			}
 		}
 		// move on to the next area
-		curArea += GLOW_DISTANCE;
+		curArea += GLOW_DISTANCE[curMaterial];
 	}
 };
 

@@ -13,12 +13,7 @@ const GRAPH_AXIS_LINE_SW = 2;
 const GRAPH_AXIS_FONT_SIZE = 10;
 
 const graphSketch = function(p) {
-	p.reset = () => {
-		p.noLoop();
-		p.graphCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
-		p.graphCnv.parent(p.parent);
-		p.graphCnv.id("graph-canvas");
-
+	p.drawDiagram = () => {
 		p.background(0);
 
 		p.stroke(GRAPH_AXIS_STROKE);
@@ -56,6 +51,15 @@ const graphSketch = function(p) {
 
 			p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE);
 		}
+	};
+
+	p.reset = () => {
+		p.noLoop();
+		p.graphCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
+		p.graphCnv.parent(p.parent);
+		p.graphCnv.id("graph-canvas");
+
+		p.drawDiagram();
 
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
@@ -68,15 +72,25 @@ const graphSketch = function(p) {
 
 		p.prevWidth = p.parent.clientWidth;
 		p.prevHeight = p.parent.clientHeight;
+
+		p.loop();
 	};
 
 	p.setup = () => {
 		p.parent = window.document.getElementById("graph-canvas-container");
 		p.points = [];
+		p.frameRate(10);
 		p.reset();
 	};
 
-	p.draw = () => {};
+	p.draw = () => {
+		p.drawDiagram();
+		p.stroke(GRAPH_STROKE);
+		p.strokeWeight(GRAPH_SW);
+		p.points.forEach(point =>
+			p.point(Math.floor(point[0]), Math.floor(point[1]))
+		);
+	};
 };
 
 const graphP5 = new p5(graphSketch, "#graph-canvas-container");
@@ -89,7 +103,7 @@ const drawOnGraph = () => {
 				0,
 				GRID_MAX,
 				GRAPH_PADDING_WIDTH * graphP5.width,
-				graphP5.width
+				graphP5.width - GRAPH_PADDING_WIDTH * graphP5.width
 			)
 		),
 		Math.floor(
@@ -98,7 +112,7 @@ const drawOnGraph = () => {
 				0,
 				f(GRID_MAX),
 				graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
-				0
+				GRAPH_PADDING_HEIGHT * graphP5.height
 			)
 		)
 	]);

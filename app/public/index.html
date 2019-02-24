@@ -17,29 +17,54 @@
 			</div>
 
 			<div id="controls-container" class="container">
-				<div class="input-group">
-					<label for="filament">Filament Voltage</label>
-					<input
-						type="range"
-						min="0"
-						max="1"
-						step="0.0001"
-						value="0"
-						id="filament"
-						class="control"
-					/>
+				<div class="input-group" id="material-select">
+					<div class="radio-group">
+						<input
+							type="radio"
+							class="radio"
+							value="mercury"
+							id="radioMercury"
+							name="material"
+							checked
+						/>
+						<label for="radioMercury">Mercury</label>
+					</div>
+					<div class="radio-group">
+						<input
+							type="radio"
+							class="radio"
+							value="neon"
+							id="radioNeon"
+							name="material"
+						/>
+						<label for="radioNeon">Neon</label>
+					</div>
 				</div>
-				<div class="input-group">
-					<label for="grid">Grid Voltage</label>
-					<input
-						type="range"
-						min="0"
-						max="1"
-						step="0.0000001"
-						value="0"
-						id="grid"
-						class="control"
-					/>
+				<div id="voltage-select">
+					<div class="input-group">
+						<label for="filament" class="range-label">Filament Voltage</label>
+						<input
+							type="range"
+							min="0"
+							max="1"
+							step="0.0001"
+							value="0"
+							id="filament"
+							class="control"
+						/>
+					</div>
+					<div class="input-group">
+						<label for="grid" class="range-label">Grid Voltage</label>
+						<input
+							type="range"
+							min="0"
+							max="1"
+							step="0.0000001"
+							value="0"
+							id="grid"
+							class="control"
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
