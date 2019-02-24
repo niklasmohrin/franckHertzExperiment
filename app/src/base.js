@@ -6,6 +6,16 @@ const map = (val, xmin, xmax, ymin, ymax) =>
 
 const rand = (start, end) => Math.floor(Math.random() * (end - start)) + start;
 
+const distanceToRectSquared = (p, rect) => {
+	const dx = Math.max(rect.min.x - p.x, p.x - rect.max.x);
+	const dy = Math.max(rect.min.y - p.y, p.y - rect.max.y);
+	return dx * dx + dy * dy;
+};
+
+const distanceToRect = (p, rect) => Math.sqrt(distanceToRectSquared(p, rect));
+
+const constrain = (x, a, b) => (x > b ? b : x < a ? a : x);
+
 /////////////////////////////////////////////////////////////////////////
 
 // constants ////////////////////////////////////////////////////////////
@@ -20,6 +30,8 @@ const FILAMENT_MAX = 10;
 let uFilament;
 const CATHODE_GLOW_COLOR = "#e05c23";
 const CATHODE_GLOW_COLOR_ALPHA = 150;
+const CATHODE_GLOW_RADIUS = 10;
+const CATHODE_GLOW_PADDING = 1.5;
 
 // tube / electron despawn area
 let eLeftBound = 57;
