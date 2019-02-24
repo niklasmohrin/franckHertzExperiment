@@ -17,6 +17,9 @@ let eSpawnHeight = 70;
 let eSpawnStartX = 80;
 let eSpawnStartY = 25;
 const FILAMENT_MAX = 10;
+let uFilament;
+const CATHODE_GLOW_COLOR = "#e05c23";
+const CATHODE_GLOW_COLOR_ALPHA = 150;
 
 // tube / electron despawn area
 let eLeftBound = 57;
@@ -32,7 +35,7 @@ const GRID_MAX = 25;
 
 // electron constants
 const ELECTRON_RADIUS = 2; //px
-const ELECTRON_COLOR = "#4e27b2"; //"#640ac8";
+const ELECTRON_COLOR = "#4081e8"; //"#4e27b2"; //"#640ac8";
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const MAX_ELECTRONS = 200;
@@ -44,7 +47,7 @@ const f = U =>
 // TODO: add f(U) to be realistic
 
 // glow constants
-const GLOW_COLOR = "#ed6517";
+const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
 const GLOW_RADIUS = 10;
 const GLOW_FADE = 10;
 
@@ -86,12 +89,13 @@ MATERIAL_INPUTS[0].dispatchEvent(new Event("input"));
 
 // sliders
 filamentInput.addEventListener("input", e => {
-	newEProb = filamentInput.value / 20;
-	glowProb = filamentInput.value * 0.5e-2;
+	uFilament = filamentInput.value;
+	newEProb = uFilament / 20;
+	glowProb = uFilament * 0.5e-2;
 });
 
 gridInput.addEventListener("input", e => {
-	uGrid = e.target.value;
+	uGrid = gridInput.value;
 	drawOnGraph();
 });
 /////////////////////////////////////////////////////////////////////////

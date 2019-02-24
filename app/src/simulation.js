@@ -7,8 +7,9 @@ const simulation = () => {
 	}
 
 	// TODO: simplyfiy
-	const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e12;
+	const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e13;
 
+	// update all electrons
 	for (let i = electrons.length - 1; i > -1; i--) {
 		const e = electrons[i];
 
@@ -26,7 +27,7 @@ const simulation = () => {
 			e.y > eBottomBound ||
 			e.y < eTopBound
 		) {
-			electrons.pop(i);
+			electrons.splice(i, 1);
 		}
 	}
 
