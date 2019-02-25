@@ -57,7 +57,7 @@ let eSpawnHeight = 70;
 let eSpawnStartX = 76;
 let eSpawnStartY = 25;
 const FILAMENT_MAX = 10;
-let uFilament;
+let uFilament = 0;
 const CATHODE_GLOW_COLOR = "#e05c23";
 // TODO: use this, not hard-coded vals in tubeSketch.js
 const CATHODE_GLOW_COLOR_ALPHA = 150;

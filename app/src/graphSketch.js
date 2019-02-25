@@ -4,13 +4,14 @@
 const GRAPH_STROKE = "blue";
 const GRAPH_SW = 2;
 const GRAPH_AXIS_STROKE = "white";
-const GRAPH_AXIS_SW = 3;
+const GRAPH_AXIS_SW = 2.5;
 const GRAPH_PADDING_HEIGHT = 0.15;
 const GRAPH_PADDING_WIDTH = 0.1;
 const GRAPH_AXIS_STEP = 5;
 const GRAPH_AXIS_LINE_HEIGHT = 2;
-const GRAPH_AXIS_LINE_SW = 2;
+const GRAPH_AXIS_LINE_SW = 1.5;
 const GRAPH_AXIS_FONT_SIZE = 10;
+const GRAPH_ARROWTIP_LENGTH = 10;
 
 const graphSketch = function(p) {
 	p.drawDiagram = () => {
@@ -37,8 +38,9 @@ const graphSketch = function(p) {
 		p.textSize(GRAPH_AXIS_FONT_SIZE);
 		p.textAlign(p.CENTER, p.CENTER);
 
-		let y = p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW;
-		for (let i = 0; i <= GRID_MAX; i += GRAPH_AXIS_STEP) {
+		// labeling the x axis
+		const y = p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW;
+		for (let i = 0; i < GRID_MAX; i += GRAPH_AXIS_STEP) {
 			let x = map(
 				i,
 				0,
@@ -51,6 +53,40 @@ const graphSketch = function(p) {
 
 			p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE);
 		}
+
+		delete y;
+
+		// drawing the arrows at the end of the axis
+		// x - axis
+		p.line(
+			p.width * (1 - GRAPH_PADDING_WIDTH),
+			p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_AXIS_SW / 2,
+			p.width * (1 - GRAPH_PADDING_WIDTH) - GRAPH_ARROWTIP_LENGTH,
+			p.height * (1 - GRAPH_PADDING_HEIGHT) -
+				GRAPH_ARROWTIP_LENGTH +
+				GRAPH_AXIS_SW / 2
+		);
+		p.line(
+			p.width * (1 - GRAPH_PADDING_WIDTH),
+			p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_AXIS_SW / 2,
+			p.width * (1 - GRAPH_PADDING_WIDTH) - GRAPH_ARROWTIP_LENGTH,
+			p.height * (1 - GRAPH_PADDING_HEIGHT) +
+				GRAPH_ARROWTIP_LENGTH +
+				GRAPH_AXIS_SW / 2
+		);
+		// y - axis
+		p.line(
+			GRAPH_PADDING_WIDTH * p.width - GRAPH_AXIS_SW / 2,
+			GRAPH_PADDING_HEIGHT * p.height,
+			GRAPH_PADDING_WIDTH * p.width + GRAPH_ARROWTIP_LENGTH - GRAPH_AXIS_SW / 2,
+			GRAPH_PADDING_HEIGHT * p.height + GRAPH_ARROWTIP_LENGTH
+		);
+		p.line(
+			GRAPH_PADDING_WIDTH * p.width - GRAPH_AXIS_SW / 2,
+			GRAPH_PADDING_HEIGHT * p.height,
+			GRAPH_PADDING_WIDTH * p.width - GRAPH_ARROWTIP_LENGTH - GRAPH_AXIS_SW / 2,
+			GRAPH_PADDING_HEIGHT * p.height + GRAPH_ARROWTIP_LENGTH
+		);
 	};
 
 	p.reset = () => {
