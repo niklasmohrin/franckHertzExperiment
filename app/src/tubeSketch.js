@@ -38,62 +38,7 @@ const tubeSketch = function(p) {
 		}
 	};
 
-	p.drawCathodeGlow = () => {
-		const cnv = p.cathodeCnv;
-
-		if (p.frameCount % 10 === 0) {
-			cnv.clear();
-			// cnv.noStroke();
-			// cnv.fill(CATHODE_GLOW_COLOR);
-			// cnv.ellipse(cnv.width / 2, cnv.height / 2, cnv.width / 2, cnv.height / 2);
-			cnv.loadPixels();
-			for (let x = 0; x < cnv.width; x++) {
-				for (let y = 0; y < cnv.height; y++) {
-					const loc = 4 * (x + y * cnv.width);
-					// let r = cnv.pixels[loc];
-					// let g = cnv.pixels[loc + 1];
-					// let b = cnv.pixels[loc + 2];
-					// const a = cnv.pixels[loc + 3];
-					// const d = distanceToRect({ x, y }, cnv.cathodeRect);
-					const d = Math.sqrt(
-						Math.pow(x - cnv.width / 2, 2) + Math.pow(y - cnv.height / 2, 2)
-					);
-					// const adjustAlpha =
-					// 	(255 * (CATHODE_GLOW_RADIUS - d)) / CATHODE_GLOW_RADIUS;
-
-					const alpha =
-						d > CATHODE_GLOW_RADIUS
-							? 0
-							: map(d, 0, CATHODE_GLOW_RADIUS, 255, 0);
-
-					// if (adjustAlpha == constrain(adjustAlpha, -255, 255))
-					// 	console.log(adjustAlpha);
-					cnv.pixels[loc] = cr;
-					cnv.pixels[loc + 1] = cg;
-					cnv.pixels[loc + 2] = cb;
-					cnv.pixels[loc + 3] = 255;
-
-					cnv.set();
-				}
-			}
-			cnv.updatePixels();
-		}
-		p.image(cnv, p.cathodeCnvRect.min.x, p.cathodeCnvRect.min.y);
-	};
-
-	p.reset = () => {
-		p.noLoop();
-		// create and mount new canvas
-		p.tubeCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
-		p.tubeCnv.parent(p.parent);
-		p.tubeCnv.id("tube-canvas");
-
-		// recalculate spawning area
-		eSpawnWidth = (40 * p.parent.clientWidth) / 460;
-		eSpawnHeight = (70 * p.parent.clientHeight) / 208;
-		eSpawnStartX = (80 * p.parent.clientWidth) / 460;
-		eSpawnStartY = (25 * p.parent.clientHeight) / 208;
-
+	p.cathodeCnvReset = () => {
 		// recalculate cathode rectangle
 		p.cathodeRect = {
 			min: {
@@ -108,18 +53,16 @@ const tubeSketch = function(p) {
 
 		p.cathodeCnvRect = {
 			min: {
-				x: eSpawnStartX - Math.floor(CATHODE_GLOW_PADDING * eSpawnWidth),
-				y: eSpawnStartY - Math.floor(CATHODE_GLOW_PADDING * eSpawnHeight)
+				x: Math.floor(eSpawnStartX - CATHODE_GLOW_PADDING * eSpawnWidth),
+				y: Math.floor(eSpawnStartY - CATHODE_GLOW_PADDING * eSpawnHeight)
 			},
 			max: {
-				x:
-					eSpawnStartX +
-					eSpawnWidth +
-					Math.floor(CATHODE_GLOW_PADDING * eSpawnWidth),
-				y:
-					eSpawnStartY +
-					eSpawnHeight +
-					Math.floor(CATHODE_GLOW_PADDING * eSpawnHeight)
+				x: Math.floor(
+					eSpawnStartX + eSpawnWidth + CATHODE_GLOW_PADDING * eSpawnWidth
+				),
+				y: Math.floor(
+					eSpawnStartY + eSpawnHeight + CATHODE_GLOW_PADDING * eSpawnHeight
+				)
 			}
 		};
 
@@ -127,18 +70,71 @@ const tubeSketch = function(p) {
 			p.cathodeCnvRect.max.x - p.cathodeCnvRect.min.x,
 			p.cathodeCnvRect.max.y - p.cathodeCnvRect.min.y
 		);
-		// p.cathodeCnv.pixelDensity(1);
+
+		p.cathodeCnv.loadPixels();
+		p.cathodeCnv.pixelDensity(1);
 		// p.cathodeCnv.translate(p.cathodeCnv.width / 2, p.cathodeCnv.height / 2);
 		p.cathodeCnv.cathodeRect = {
 			min: {
-				x: Math.floor(CATHODE_GLOW_PADDING * eSpawnWidth),
-				y: Math.floor(CATHODE_GLOW_PADDING * eSpawnHeight)
+				x:
+					p.cathodeCnv.width / 2 -
+					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnWidth),
+				y:
+					p.cathodeCnv.height / 2 -
+					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnHeight)
 			},
 			max: {
-				x: Math.floor(CATHODE_GLOW_PADDING * eSpawnWidth) + eSpawnWidth,
-				y: Math.floor(CATHODE_GLOW_PADDING * eSpawnHeight) + eSpawnHeight
+				x:
+					p.cathodeCnv.width / 2 +
+					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnWidth),
+				y:
+					p.cathodeCnv.height / 2 +
+					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnHeight)
 			}
 		};
+		p.redrawCathodeGlow();
+	};
+
+	p.redrawCathodeGlow = () => {
+		const cnv = p.cathodeCnv;
+
+		cnv.clear();
+		for (let x = 0; x < cnv.width; x++) {
+			for (let y = 0; y < cnv.height; y++) {
+				const loc = 4 * (x + y * cnv.width);
+
+				const d = distanceToRect({ x, y }, cnv.cathodeRect);
+
+				const alpha = map(d, 0, cathodeGlowRadius, 255, 0);
+
+				if (alpha > 0) {
+					cnv.pixels[loc] = cr;
+					cnv.pixels[loc + 1] = cg;
+					cnv.pixels[loc + 2] = cb;
+					cnv.pixels[loc + 3] = constrain(alpha, 0, 255);
+				} else {
+					cnv.pixels[loc + 3] = 0;
+				}
+
+				// cnv.set();
+			}
+		}
+		cnv.updatePixels();
+	};
+
+	p.reset = () => {
+		p.noLoop();
+		// delete old and create new canvas
+		delete p.tubeCnv;
+		p.tubeCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
+		p.tubeCnv.parent(p.parent);
+		p.tubeCnv.id("tube-canvas");
+
+		// recalculate spawning area
+		eSpawnWidth = (40 * p.parent.clientWidth) / 460;
+		eSpawnHeight = (70 * p.parent.clientHeight) / 208;
+		eSpawnStartX = (80 * p.parent.clientWidth) / 460;
+		eSpawnStartY = (25 * p.parent.clientHeight) / 208;
 
 		// recalculate boundaries
 		eLeftBound = (57 * p.parent.clientWidth) / 460;
@@ -159,6 +155,9 @@ const tubeSketch = function(p) {
 		p.prevWidth = p.parent.clientWidth;
 		p.prevHeight = p.parent.clientHeight;
 
+		// reset cathode glow canvas
+		p.cathodeCnvReset();
+
 		// vanish canvas
 		p.background(0);
 
@@ -176,8 +175,12 @@ const tubeSketch = function(p) {
 
 	p.draw = () => {
 		p.clear();
-		p.drawCathodeGlow();
 		p.drawElectrons();
+		if (p.frameCount % 10 === 0) {
+			p.redrawCathodeGlow();
+		}
+		// draw cathode glow
+		p.image(p.cathodeCnv, p.cathodeCnvRect.min.x, p.cathodeCnvRect.min.y);
 		p.drawGlows();
 	};
 

@@ -7,8 +7,14 @@ const map = (val, xmin, xmax, ymin, ymax) =>
 const rand = (start, end) => Math.floor(Math.random() * (end - start)) + start;
 
 const distanceToRectSquared = (p, rect) => {
-	const dx = Math.max(rect.min.x - p.x, p.x - rect.max.x);
-	const dy = Math.max(rect.min.y - p.y, p.y - rect.max.y);
+	const dx =
+		p.x > rect.min.x && p.x < rect.max.x
+			? 0
+			: Math.max(rect.min.x - p.x, p.x - rect.max.x);
+	const dy =
+		p.y > rect.min.y && p.y < rect.max.y
+			? 0
+			: Math.max(rect.min.y - p.y, p.y - rect.max.y);
 	return dx * dx + dy * dy;
 };
 
@@ -30,8 +36,8 @@ const FILAMENT_MAX = 10;
 let uFilament;
 const CATHODE_GLOW_COLOR = "#e05c23";
 const CATHODE_GLOW_COLOR_ALPHA = 150;
-const CATHODE_GLOW_RADIUS = 10;
-const CATHODE_GLOW_PADDING = 1.5;
+let cathodeGlowRadius = 0;
+const CATHODE_GLOW_PADDING = 0.05;
 
 // tube / electron despawn area
 let eLeftBound = 57;
@@ -51,6 +57,8 @@ const ELECTRON_COLOR = "#4081e8"; //"#4e27b2"; //"#640ac8";
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const MAX_ELECTRONS = 200;
+const MIN_ELECTRONS = 10; // if filament voltage is applied
+let curMaxElectrons = 0;
 let electrons = [];
 
 // mapping U to I
@@ -104,11 +112,14 @@ filamentInput.addEventListener("input", e => {
 	uFilament = filamentInput.value;
 	newEProb = uFilament / 20;
 	glowProb = uFilament * 0.5e-2;
+	cathodeGlowRadius = uFilament * 3.5;
 });
 
 gridInput.addEventListener("input", e => {
 	uGrid = gridInput.value;
 	drawOnGraph();
+	curMaxElectrons =
+		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
 });
 /////////////////////////////////////////////////////////////////////////
 

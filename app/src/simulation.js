@@ -2,7 +2,7 @@
 
 const simulation = () => {
 	// adds an electron sometimes
-	if (electrons.length < MAX_ELECTRONS && Math.random() < newEProb) {
+	if (electrons.length < curMaxElectrons && Math.random() < newEProb) {
 		electrons.push(new ParticleElectron());
 	}
 
