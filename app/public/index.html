@@ -93,14 +93,15 @@
 		<!-- Handling resize events -->
 		<script>
 			// only exectutes 250ms after last event
-			let resizeTimer;
-			window.addEventListener("resize", () => {
-				clearTimeout(resizeTimer);
-				resizeTimer = setTimeout(() => {
+			window.addEventListener(
+				"resize",
+				debounce(() => {
 					tubeP5.reset();
 					graphP5.reset();
-				}, 250);
-			});
+					filamentInput.dispatchEvent(new Event("input"));
+					gridInput.dispatchEvent(new Event("input"));
+				}, 150)
+			);
 		</script>
 	</body>
 </html>

@@ -1,11 +1,14 @@
 // tubeSketch.js
 // p5.js sketch file for the tube
 
+// cathode glow color
 const cr = 224;
 const cg = 92;
 const cb = 35;
 
 const tubeSketch = function(p) {
+	// Drawing methods ////////////////////////////////////////////////////////////////////////////
+
 	p.drawElectrons = () => {
 		p.stroke(ELECTRON_COLOR);
 		p.strokeWeight(ELECTRON_RADIUS);
@@ -38,19 +41,12 @@ const tubeSketch = function(p) {
 		}
 	};
 
-	p.cathodeCnvReset = () => {
-		// recalculate cathode rectangle
-		p.cathodeRect = {
-			min: {
-				x: eSpawnStartX,
-				y: eSpawnStartY
-			},
-			max: {
-				x: eSpawnStartX + eSpawnWidth,
-				y: eSpawnStartY + eSpawnHeight
-			}
-		};
+	///////////////////////////////////////////////////////////////////////////////////////////////
 
+	// Cathode Drawing ////////////////////////////////////////////////////////////////////////////
+
+	p.cathodeCnvReset = () => {
+		// recalculate dimensions of the cathode canvas
 		p.cathodeCnvRect = {
 			min: {
 				x: Math.floor(eSpawnStartX - CATHODE_GLOW_PADDING * eSpawnWidth),
@@ -66,47 +62,49 @@ const tubeSketch = function(p) {
 			}
 		};
 
-		p.cathodeCnv = p.createGraphics(
-			p.cathodeCnvRect.max.x - p.cathodeCnvRect.min.x,
-			p.cathodeCnvRect.max.y - p.cathodeCnvRect.min.y
-		);
+		// recreate cathode canvas
+		delete p.cathodeCnv;
+		const w = p.cathodeCnvRect.max.x - p.cathodeCnvRect.min.x;
+		const h = p.cathodeCnvRect.max.y - p.cathodeCnvRect.min.y;
+		p.cathodeCnv = p.createGraphics(w, h);
 
+		// setup for drawing
 		p.cathodeCnv.loadPixels();
 		p.cathodeCnv.pixelDensity(1);
-		// p.cathodeCnv.translate(p.cathodeCnv.width / 2, p.cathodeCnv.height / 2);
-		p.cathodeCnv.cathodeRect = {
-			min: {
-				x:
-					p.cathodeCnv.width / 2 -
-					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnWidth),
-				y:
-					p.cathodeCnv.height / 2 -
-					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnHeight)
-			},
-			max: {
-				x:
-					p.cathodeCnv.width / 2 +
-					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnWidth),
-				y:
-					p.cathodeCnv.height / 2 +
-					Math.floor(3 * CATHODE_GLOW_PADDING * eSpawnHeight)
-			}
-		};
+
+		// draw the canvas
 		p.redrawCathodeGlow();
 	};
 
 	p.redrawCathodeGlow = () => {
 		const cnv = p.cathodeCnv;
-
+		const cathodeCenter = {
+			min: {
+				x: eSpawnWidth / 2 - eSpawnWidth * CATHODE_CENTER_WIDTH,
+				y: eSpawnHeight / 2 - eSpawnHeight * CATHODE_CENTER_HEIGHT
+			},
+			max: {
+				x: eSpawnWidth / 2 + eSpawnWidth * CATHODE_CENTER_WIDTH,
+				y: eSpawnHeight / 2 + eSpawnHeight * CATHODE_CENTER_HEIGHT
+			}
+		};
 		cnv.clear();
+		// iterate over all pixels
 		for (let x = 0; x < cnv.width; x++) {
 			for (let y = 0; y < cnv.height; y++) {
+				// location in the pixel array
 				const loc = 4 * (x + y * cnv.width);
-
-				const d = distanceToRect({ x, y }, cnv.cathodeRect);
-
-				const alpha = map(d, 0, cathodeGlowRadius, 255, 0);
-
+				// distance to the cathode center rect
+				const d = distanceToRect({ x, y }, cathodeCenter);
+				// alpha mapping
+				const alpha = map(
+					d,
+					0,
+					cathodeGlowRadius,
+					map(uFilament, 0, FILAMENT_MAX, 0, 300),
+					0
+				);
+				// don't bother setting any colors when alpha is 0 (or lower)
 				if (alpha > 0) {
 					cnv.pixels[loc] = cr;
 					cnv.pixels[loc + 1] = cg;
@@ -115,12 +113,15 @@ const tubeSketch = function(p) {
 				} else {
 					cnv.pixels[loc + 3] = 0;
 				}
-
-				// cnv.set();
 			}
 		}
 		cnv.updatePixels();
+		p.cathodeDrawn = true;
 	};
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	// tubeP5 reset, setup and draw; glow scheduler ///////////////////////////////////////////////
 
 	p.reset = () => {
 		p.noLoop();
@@ -176,7 +177,7 @@ const tubeSketch = function(p) {
 	p.draw = () => {
 		p.clear();
 		p.drawElectrons();
-		if (p.frameCount % 10 === 0) {
+		if (!p.cathodeDrawn || p.frameCount % 10 === 0) {
 			p.redrawCathodeGlow();
 		}
 		// draw cathode glow
@@ -192,6 +193,10 @@ const tubeSketch = function(p) {
 			a: 255
 		});
 	};
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
 };
 
 const tubeP5 = new p5(tubeSketch, "#tube-canvas-container");
+
+const scheduleCathodeRedraw = debounce(() => (tubeP5.cathodeDrawn = false), 5);

@@ -22,6 +22,30 @@ const distanceToRect = (p, rect) => Math.sqrt(distanceToRectSquared(p, rect));
 
 const constrain = (x, a, b) => (x > b ? b : x < a ? a : x);
 
+const debounce = (func, wait, immediate) => {
+	let timeout;
+	return function() {
+		let context = this,
+			args = arguments;
+		let later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		let callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+const avg = (...args) => {
+	if (args.length > 0) {
+		return args.reduce((prev, cur) => (prev += cur)) / args.length;
+	} else {
+		throw new Error("no args given to avg()");
+	}
+};
+
 /////////////////////////////////////////////////////////////////////////
 
 // constants ////////////////////////////////////////////////////////////
@@ -35,9 +59,12 @@ let eSpawnStartY = 25;
 const FILAMENT_MAX = 10;
 let uFilament;
 const CATHODE_GLOW_COLOR = "#e05c23";
+// TODO: use this, not hard-coded vals in tubeSketch.js
 const CATHODE_GLOW_COLOR_ALPHA = 150;
 let cathodeGlowRadius = 0;
-const CATHODE_GLOW_PADDING = 0.05;
+const CATHODE_GLOW_PADDING = 0.1;
+const CATHODE_CENTER_WIDTH = 0.08;
+const CATHODE_CENTER_HEIGHT = 0.17;
 
 // tube / electron despawn area
 let eLeftBound = 57;
@@ -108,19 +135,26 @@ MATERIAL_INPUTS.forEach(node => {
 MATERIAL_INPUTS[0].dispatchEvent(new Event("input"));
 
 // sliders
-filamentInput.addEventListener("input", e => {
+const handleFilamentInput = e => {
 	uFilament = filamentInput.value;
 	newEProb = uFilament / 20;
 	glowProb = uFilament * 0.5e-2;
-	cathodeGlowRadius = uFilament * 3.5;
-});
+	// adjust cathode glow radius based on uFilament and window size
+	cathodeGlowRadius =
+		(uFilament * 4.21 * avg(window.innerWidth, window.innerHeight)) / 678.5;
+	scheduleCathodeRedraw();
+};
 
-gridInput.addEventListener("input", e => {
+const handleGridInput = e => {
 	uGrid = gridInput.value;
 	drawOnGraph();
 	curMaxElectrons =
 		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
-});
+};
+
+filamentInput.addEventListener("input", handleFilamentInput);
+
+gridInput.addEventListener("input", handleGridInput);
 /////////////////////////////////////////////////////////////////////////
 
 // simulation loop //////////////////////////////////////////////////////
