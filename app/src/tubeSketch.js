@@ -8,7 +8,6 @@ const cb = 35;
 
 const tubeSketch = function(p) {
 	// Drawing methods ////////////////////////////////////////////////////////////////////////////
-
 	p.drawElectrons = () => {
 		p.stroke(ELECTRON_COLOR);
 		p.strokeWeight(ELECTRON_RADIUS);
@@ -44,7 +43,6 @@ const tubeSketch = function(p) {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Cathode Drawing ////////////////////////////////////////////////////////////////////////////
-
 	p.cathodeCnvReset = () => {
 		// recalculate dimensions of the cathode canvas
 		p.cathodeCnvRect = {
@@ -80,12 +78,12 @@ const tubeSketch = function(p) {
 		const cnv = p.cathodeCnv;
 		const cathodeCenter = {
 			min: {
-				x: eSpawnWidth / 2 - eSpawnWidth * CATHODE_CENTER_WIDTH,
-				y: eSpawnHeight / 2 - eSpawnHeight * CATHODE_CENTER_HEIGHT
+				x: cnv.width / 2 - eSpawnWidth * CATHODE_CENTER_WIDTH,
+				y: cnv.height / 2 - eSpawnHeight * CATHODE_CENTER_HEIGHT
 			},
 			max: {
-				x: eSpawnWidth / 2 + eSpawnWidth * CATHODE_CENTER_WIDTH,
-				y: eSpawnHeight / 2 + eSpawnHeight * CATHODE_CENTER_HEIGHT
+				x: cnv.width / 2 + eSpawnWidth * CATHODE_CENTER_WIDTH,
+				y: cnv.height / 2 + eSpawnHeight * CATHODE_CENTER_HEIGHT
 			}
 		};
 		cnv.clear();
@@ -101,7 +99,7 @@ const tubeSketch = function(p) {
 					d,
 					0,
 					cathodeGlowRadius,
-					map(uFilament, 0, FILAMENT_MAX, 0, 300),
+					map(uFilament, 0, FILAMENT_MAX, 0, 310),
 					0
 				);
 				// don't bother setting any colors when alpha is 0 (or lower)
@@ -122,7 +120,6 @@ const tubeSketch = function(p) {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	// tubeP5 reset, setup and draw; glow scheduler ///////////////////////////////////////////////
-
 	p.reset = () => {
 		p.noLoop();
 		// delete old and create new canvas

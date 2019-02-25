@@ -52,9 +52,9 @@ const avg = (...args) => {
 
 // tube: 460px * 208px
 // electron spawning area / filament
-let eSpawnWidth = 40;
+let eSpawnWidth = 38;
 let eSpawnHeight = 70;
-let eSpawnStartX = 80;
+let eSpawnStartX = 76;
 let eSpawnStartY = 25;
 const FILAMENT_MAX = 10;
 let uFilament;
@@ -62,11 +62,13 @@ const CATHODE_GLOW_COLOR = "#e05c23";
 // TODO: use this, not hard-coded vals in tubeSketch.js
 const CATHODE_GLOW_COLOR_ALPHA = 150;
 let cathodeGlowRadius = 0;
-const CATHODE_GLOW_PADDING = 0.1;
-const CATHODE_CENTER_WIDTH = 0.08;
-const CATHODE_CENTER_HEIGHT = 0.17;
+const CATHODE_GLOW_MIN_RADIUS = 10;
+const CATHODE_GLOW_MAX_RADIUS = 50;
+const CATHODE_GLOW_PADDING = 0.3;
+const CATHODE_CENTER_WIDTH = 0.05;
+const CATHODE_CENTER_HEIGHT = 0.12;
 
-// tube / electron despawn area
+// electron despawn area
 let eLeftBound = 57;
 let eRightBound = 393;
 let eTopBound = 11;
@@ -139,9 +141,16 @@ const handleFilamentInput = e => {
 	uFilament = filamentInput.value;
 	newEProb = uFilament / 20;
 	glowProb = uFilament * 0.5e-2;
-	// adjust cathode glow radius based on uFilament and window size
-	cathodeGlowRadius =
-		(uFilament * 4.21 * avg(window.innerWidth, window.innerHeight)) / 678.5;
+	// adjust cathode glow radius based on uFilament
+	cathodeGlowRadius = map(
+		uFilament,
+		0,
+		FILAMENT_MAX,
+		CATHODE_GLOW_MIN_RADIUS,
+		CATHODE_GLOW_MAX_RADIUS
+	);
+	// adjust to window size
+	cathodeGlowRadius *= avg(window.innerWidth, window.innerHeight) / 678.5;
 	scheduleCathodeRedraw();
 };
 
@@ -153,7 +162,6 @@ const handleGridInput = e => {
 };
 
 filamentInput.addEventListener("input", handleFilamentInput);
-
 gridInput.addEventListener("input", handleGridInput);
 /////////////////////////////////////////////////////////////////////////
 
