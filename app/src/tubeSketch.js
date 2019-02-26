@@ -6,6 +6,26 @@ const cr = 224;
 const cg = 92;
 const cb = 35;
 
+// map tube and cathode areas to new dimensions
+const recalculateBoundaries = (w, h) => {
+	// recalculate spawning area
+	eSpawnStartX = ORIG_DATA.eSpawnStartX * (w / ORIG_DATA.tubeWidth);
+	eSpawnStartY = ORIG_DATA.eSpawnStartY * (h / ORIG_DATA.tubeHeight);
+	eSpawnEndX = ORIG_DATA.eSpawnEndX * (w / ORIG_DATA.tubeWidth);
+	eSpawnEndY = ORIG_DATA.eSpawnEndY * (h / ORIG_DATA.tubeHeight);
+	eSpawnWidth = ORIG_DATA.eSpawnWidth * (w / ORIG_DATA.tubeWidth);
+	eSpawnHeight = ORIG_DATA.eSpawnHeight * (h / ORIG_DATA.tubeHeight);
+
+	// recalculate boundaries
+	eLeftBound = ORIG_DATA.eLeftBound * (w / ORIG_DATA.tubeWidth);
+	eRightBound = ORIG_DATA.eRightBound * (w / ORIG_DATA.tubeWidth);
+	eTopBound = ORIG_DATA.eTopBound * (h / ORIG_DATA.tubeHeight);
+	eBottomBound = ORIG_DATA.eBottomBound * (h / ORIG_DATA.tubeHeight);
+
+	// recalculate grid position
+	gridX = ORIG_DATA.gridX * (w / ORIG_DATA.tubeWidth);
+};
+
 const tubeSketch = function(p) {
 	// Drawing methods ////////////////////////////////////////////////////////////////////////////
 	p.drawElectrons = () => {
@@ -39,7 +59,6 @@ const tubeSketch = function(p) {
 			} else p.glows.splice(i, 1);
 		}
 	};
-
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Cathode Drawing ////////////////////////////////////////////////////////////////////////////
@@ -51,12 +70,8 @@ const tubeSketch = function(p) {
 				y: Math.floor(eSpawnStartY - CATHODE_GLOW_PADDING * eSpawnHeight)
 			},
 			max: {
-				x: Math.floor(
-					eSpawnStartX + eSpawnWidth + CATHODE_GLOW_PADDING * eSpawnWidth
-				),
-				y: Math.floor(
-					eSpawnStartY + eSpawnHeight + CATHODE_GLOW_PADDING * eSpawnHeight
-				)
+				x: Math.floor(eSpawnEndX + CATHODE_GLOW_PADDING * eSpawnWidth),
+				y: Math.floor(eSpawnEndY + CATHODE_GLOW_PADDING * eSpawnHeight)
 			}
 		};
 
@@ -128,28 +143,16 @@ const tubeSketch = function(p) {
 		p.tubeCnv.parent(p.parent);
 		p.tubeCnv.id("tube-canvas");
 
-		// recalculate spawning area
-		eSpawnWidth = (40 * p.parent.clientWidth) / 460;
-		eSpawnHeight = (70 * p.parent.clientHeight) / 208;
-		eSpawnStartX = (80 * p.parent.clientWidth) / 460;
-		eSpawnStartY = (25 * p.parent.clientHeight) / 208;
+		// recalculate spawning area, boundaries and grid position
+		recalculateBoundaries(p.parent.clientWidth, p.parent.clientHeight);
 
-		// recalculate boundaries
-		eLeftBound = (57 * p.parent.clientWidth) / 460;
-		eRightBound = (393 * p.parent.clientWidth) / 460;
-		eTopBound = (11 * p.parent.clientHeight) / 208;
-		eBottomBound = (105 * p.parent.clientHeight) / 208;
-
-		// recalculate grid position
-		gridX = (315 * p.parent.clientWidth) / 460;
-
-		// recalculating electron positions
+		// recalculate electron positions
 		electrons.forEach(e => {
 			e.x *= p.parent.clientWidth / p.prevWidth;
 			e.y *= p.parent.clientHeight / p.prevHeight;
 		});
 
-		// keeping track of old size for next resize
+		// keep track of old size for next resize event
 		p.prevWidth = p.parent.clientWidth;
 		p.prevHeight = p.parent.clientHeight;
 

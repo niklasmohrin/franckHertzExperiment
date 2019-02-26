@@ -48,41 +48,49 @@ const avg = (...args) => {
 
 /////////////////////////////////////////////////////////////////////////
 
-// constants ////////////////////////////////////////////////////////////
+// physics constants ////////////////////////////////////////////////////
 
-// tube: 460px * 208px
 // electron spawning area / filament
-let eSpawnWidth = 38;
-let eSpawnHeight = 70;
-let eSpawnStartX = 76;
-let eSpawnStartY = 25;
+
+// postinions of several boundaries at dimensions tubeWidth * tubeHeight
+const ORIG_DATA = {
+	tubeWidth: 460,
+	tubeHeight: 208,
+	eSpawnStartX: 79,
+	eSpawnStartY: 29,
+	eSpawnEndX: 115,
+	eSpawnEndY: 91,
+	eSpawnWidth: 115 - 79,
+	eSpawnHeight: 91 - 29,
+	eLeftBound: 57,
+	eRightBound: 393,
+	eTopBound: 11,
+	eBottomBound: 105,
+	gridX: 315
+};
+// declaration and initialization of boundary variables
+let {
+	eSpawnStartX,
+	eSpawnStartY,
+	eSpawnEndX,
+	eSpawnEndY,
+	eSpawnWidth,
+	eSpawnHeight,
+	gridX,
+	eLeftBound,
+	eRightBound,
+	eTopBound,
+	eBottomBound
+} = ORIG_DATA;
+// filament
 const FILAMENT_MAX = 10;
 let uFilament = 0;
-const CATHODE_GLOW_COLOR = "#e05c23";
-// TODO: use this, not hard-coded vals in tubeSketch.js
-const CATHODE_GLOW_COLOR_ALPHA = 150;
-let cathodeGlowRadius = 0;
-const CATHODE_GLOW_MIN_RADIUS = 10;
-const CATHODE_GLOW_MAX_RADIUS = 50;
-const CATHODE_GLOW_PADDING = 0.3;
-const CATHODE_CENTER_WIDTH = 0.05;
-const CATHODE_CENTER_HEIGHT = 0.12;
-
-// electron despawn area
-let eLeftBound = 57;
-let eRightBound = 393;
-let eTopBound = 11;
-let eBottomBound = 105;
-
 // grid
-let gridX = 315;
 let uGrid = 0;
 const GRID_LENGTH = 1;
 const GRID_MAX = 25;
-
-// electron constants
+// electron
 const ELECTRON_RADIUS = 2; //px
-const ELECTRON_COLOR = "#4081e8"; //"#4e27b2"; //"#640ac8";
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const MAX_ELECTRONS = 200;
@@ -95,12 +103,28 @@ const f = U =>
 	Math.sin(map(U % 4.7, 0, 4.7, 0, (5 / 6) * Math.PI)) * Math.exp(U / 20);
 // TODO: add f(U) to be realistic
 
-// glow constants
+/////////////////////////////////////////////////////////////////////////
+
+// design constants /////////////////////////////////////////////////////
+
+// colors
+const ELECTRON_COLOR = "#4081e8"; //"#4e27b2"; //"#640ac8";
+const CATHODE_GLOW_COLOR = "#e05c23"; // TODO: use this, not hard-coded vals in tubeSketch.js
 const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
+
+// cathode glow
+let cathodeGlowRadius = 0;
+const CATHODE_GLOW_MIN_RADIUS = 10;
+const CATHODE_GLOW_MAX_RADIUS = 50;
+const CATHODE_GLOW_PADDING = 0.3;
+const CATHODE_CENTER_WIDTH = 0.05;
+const CATHODE_CENTER_HEIGHT = 0.12;
+
+// material glow constants
 const GLOW_RADIUS = 10;
 const GLOW_FADE = 10;
 
-// glow area constants
+// material glow area constants
 const GLOW_OFFSET = { mercury: 0.4, neon: 0 };
 const GLOW_DISTANCE = { mercury: 4.9, neon: 18.7 };
 const MIN_GLOWS = 2;
@@ -111,7 +135,7 @@ const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
 /////////////////////////////////////////////////////////////////////////
 
 // Set ranges for inputs ////////////////////////////////////////////////
-const MATERIAL_INPUTS = document.getElementsByName("material");
+const materialInputs = document.getElementsByName("material");
 const filamentInput = document.getElementById("filament");
 const gridInput = document.getElementById("grid");
 
@@ -127,14 +151,14 @@ let newEProb = 0;
 let glowProb = 0;
 
 // radio group
-MATERIAL_INPUTS.forEach(node => {
+materialInputs.forEach(node => {
 	node.addEventListener("input", () => {
 		curMaterial = node.value;
 	});
 });
 
 // intitial trigger
-MATERIAL_INPUTS[0].dispatchEvent(new Event("input"));
+materialInputs[0].dispatchEvent(new Event("input"));
 
 // sliders
 const handleFilamentInput = e => {
