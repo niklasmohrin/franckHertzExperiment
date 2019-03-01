@@ -12,6 +12,7 @@ const GRAPH_AXIS_LINE_HEIGHT = 2;
 const GRAPH_AXIS_LINE_SW = 1.5;
 const GRAPH_AXIS_FONT_SIZE = 10;
 const GRAPH_ARROWTIP_LENGTH = 10;
+const GRAPH_MAX_X_DIFF = 10;
 
 const graphSketch = p => {
 	p.drawDiagram = () => {
@@ -89,6 +90,28 @@ const graphSketch = p => {
 		);
 	};
 
+	p.drawGraph = () => {
+		const keys = Object.keys(p.points)
+			.map(parseFloat)
+			.sort();
+		for (let i = 1; i < keys.length; i++) {
+			if (abs(keys[i - 1] - keys[i]) < GRAPH_MAX_X_DIFF)
+				p.line(keys[i - 1], p.points[keys[i - 1]], keys[i], p.points[keys[i]]);
+		}
+		p.smooth();
+	};
+
+	p.recalcPoints = () => {
+		const wFactor = p.parent.clientWidth / p.prevWidth;
+		const hFactor = p.parent.clientHeight / p.prevHeight;
+		const keys = Object.keys(p.points);
+		const newPoints = {};
+		keys.forEach(key => {
+			newPoints[key * wFactor] = p.points[key] * hFactor;
+		});
+		p.points = newPoints;
+	};
+
 	p.reset = () => {
 		p.noLoop();
 		p.graphCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
@@ -100,11 +123,8 @@ const graphSketch = p => {
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
 
-		p.points.forEach(point => {
-			point[0] *= p.parent.clientWidth / p.prevWidth;
-			point[1] *= p.parent.clientHeight / p.prevHeight;
-			p.point(Math.floor(point[0]), Math.floor(point[1]));
-		});
+		p.recalcPoints();
+		p.drawGraph();
 
 		p.prevWidth = p.parent.clientWidth;
 		p.prevHeight = p.parent.clientHeight;
@@ -114,7 +134,7 @@ const graphSketch = p => {
 
 	p.setup = () => {
 		p.parent = window.document.getElementById("graph-canvas-container");
-		p.points = [];
+		p.points = {};
 		p.frameRate(10);
 		p.reset();
 	};
@@ -123,35 +143,26 @@ const graphSketch = p => {
 		p.drawDiagram();
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
-		p.points.forEach(point =>
-			p.point(Math.floor(point[0]), Math.floor(point[1]))
-		);
+		p.drawGraph();
 	};
 };
 
 const graphP5 = new p5(graphSketch, "#graph-canvas-container");
 
-const drawOnGraph = () => {
-	const point = ([x, y] = [
-		Math.floor(
-			map(
-				uGrid,
-				0,
-				GRID_MAX,
-				GRAPH_PADDING_WIDTH * graphP5.width,
-				graphP5.width - GRAPH_PADDING_WIDTH * graphP5.width
-			)
-		),
-		Math.floor(
-			map(
-				f(uGrid),
-				0,
-				f(GRID_MAX),
-				graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
-				GRAPH_PADDING_HEIGHT * graphP5.height
-			)
-		)
-	]);
-	graphP5.point(x, y);
-	graphP5.points.push(point);
+const addPoint = () => {
+	const x = map(
+		uGrid,
+		0,
+		GRID_MAX,
+		GRAPH_PADDING_WIDTH * graphP5.width,
+		graphP5.width - GRAPH_PADDING_WIDTH * graphP5.width
+	);
+	const y = map(
+		f(uGrid),
+		0,
+		f(GRID_MAX),
+		graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
+		GRAPH_PADDING_HEIGHT * graphP5.height
+	);
+	graphP5.points[x] = y;
 };

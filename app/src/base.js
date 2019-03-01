@@ -57,6 +57,8 @@ const hexToRgb = hex => {
 		: null;
 };
 
+const abs = x => (x < 0 ? -x : x);
+
 /////////////////////////////////////////////////////////////////////////
 
 // physics constants ////////////////////////////////////////////////////
@@ -199,7 +201,7 @@ const handleFilamentInput = () => {
 
 const handleGridInput = e => {
 	uGrid = gridInput.value;
-	drawOnGraph();
+	addPoint();
 	curMaxElectrons =
 		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
 };
