@@ -6,8 +6,8 @@ const simulation = () => {
 		electrons.push(new ParticleElectron());
 	}
 
-	// TODO: simplyfiy
-	const curForce = (ELECTRON_CHARGE * uGrid) / GRID_LENGTH / 1e13;
+	// simplified, just for demonstration
+	const curAcc = map(uGrid, 0, GRID_MAX, ELECTRON_ACC_MIN, ELECTRON_ACC_MAX);
 
 	// update all electrons
 	for (let i = electrons.length - 1; i > -1; i--) {
@@ -15,7 +15,7 @@ const simulation = () => {
 
 		// accelerate if not behind grid
 		if (e.x < gridX) {
-			e.applyForce(curForce, 0);
+			e.accelerate(curAcc, 0);
 		}
 		// always update
 		e.update();

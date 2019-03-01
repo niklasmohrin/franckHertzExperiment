@@ -13,10 +13,6 @@ class ParticleElectron {
 	}
 }
 
-ParticleElectron.prototype.getAbs = function() {
-	Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-};
-
 ParticleElectron.prototype.update = function() {
 	this.vx += this.ax;
 	this.vy += this.ay;
@@ -30,18 +26,4 @@ ParticleElectron.prototype.update = function() {
 ParticleElectron.prototype.accelerate = function(_ax, _ay) {
 	this.ax += _ax;
 	this.ay += _ay;
-};
-
-ParticleElectron.prototype.applyForce = function(_fx, _fy) {
-	// this.accelerate(_fx / ELECTRON_MASS, _fy / ELECTRON_MASS);
-	this.ax += _fx / ELECTRON_MASS;
-	this.ay += _fy / ELECTRON_MASS;
-};
-
-ParticleElectron.prototype.getE = function() {
-	return 0.5 * ELECTRON_MASS * (this.vx * this.vx + this.vy * this.vy);
-};
-
-ParticleElectron.prototype.subtractEnergy = energy => {
-	this.vx -= Math.sqrt((2 * energy) / ELECTRON_MASS);
 };

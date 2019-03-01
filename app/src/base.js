@@ -25,13 +25,13 @@ const constrain = (x, a, b) => (x > b ? b : x < a ? a : x);
 const debounce = (func, wait, immediate) => {
 	let timeout;
 	return function() {
-		let context = this,
+		const context = this,
 			args = arguments;
-		let later = function() {
+		const later = function() {
 			timeout = null;
 			if (!immediate) func.apply(context, args);
 		};
-		let callNow = immediate && !timeout;
+		const callNow = immediate && !timeout;
 		clearTimeout(timeout);
 		timeout = setTimeout(later, wait);
 		if (callNow) func.apply(context, args);
@@ -44,6 +44,17 @@ const avg = (...args) => {
 	} else {
 		throw new Error("no args given to avg()");
 	}
+};
+
+const hexToRgb = hex => {
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result
+		? {
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16)
+		  }
+		: null;
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -68,6 +79,7 @@ const ORIG_DATA = {
 	eBottomBound: 105,
 	gridX: 315
 };
+
 // declaration and initialization of boundary variables
 let {
 	eSpawnStartX,
@@ -82,21 +94,21 @@ let {
 	eTopBound,
 	eBottomBound
 } = ORIG_DATA;
+
 // filament
 const FILAMENT_MAX = 10;
 let uFilament = 0;
+
 // grid
-let uGrid = 0;
 const GRID_LENGTH = 1;
 const GRID_MAX = 25;
+let uGrid = 0;
+
 // electron
-const ELECTRON_RADIUS = 2; //px
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
-const MAX_ELECTRONS = 200;
-const MIN_ELECTRONS = 10; // if filament voltage is applied
-let curMaxElectrons = 0;
-let electrons = [];
+const ELECTRON_ACC_MIN = 0;
+const ELECTRON_ACC_MAX = 0.05;
 
 // mapping U to I
 const f = U =>
@@ -107,15 +119,22 @@ const f = U =>
 
 // design constants /////////////////////////////////////////////////////
 
+// electrons
+const ELECTRON_RADIUS = 2; //px
+const MAX_ELECTRONS = 200;
+const MIN_ELECTRONS = 10; // if filament voltage is applied
+let curMaxElectrons = 0;
+let electrons = [];
+
 // colors
 const ELECTRON_COLOR = "#4081e8"; //"#4e27b2"; //"#640ac8";
 const CATHODE_GLOW_COLOR = "#e05c23"; // TODO: use this, not hard-coded vals in tubeSketch.js
 const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
 
 // cathode glow
-let cathodeGlowRadius = 0;
 const CATHODE_GLOW_MIN_RADIUS = 10;
 const CATHODE_GLOW_MAX_RADIUS = 50;
+let cathodeGlowRadius = 0;
 const CATHODE_GLOW_PADDING = 0.3;
 const CATHODE_CENTER_WIDTH = 0.05;
 const CATHODE_CENTER_HEIGHT = 0.12;
@@ -161,7 +180,7 @@ materialInputs.forEach(node => {
 materialInputs[0].dispatchEvent(new Event("input"));
 
 // sliders
-const handleFilamentInput = e => {
+const handleFilamentInput = () => {
 	uFilament = filamentInput.value;
 	newEProb = uFilament / 20;
 	glowProb = uFilament * 0.5e-2;

@@ -13,7 +13,7 @@ const GRAPH_AXIS_LINE_SW = 1.5;
 const GRAPH_AXIS_FONT_SIZE = 10;
 const GRAPH_ARROWTIP_LENGTH = 10;
 
-const graphSketch = function(p) {
+const graphSketch = p => {
 	p.drawDiagram = () => {
 		p.background(0);
 
@@ -39,22 +39,22 @@ const graphSketch = function(p) {
 		p.textAlign(p.CENTER, p.CENTER);
 
 		// labeling the x axis
-		const y = p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW;
-		for (let i = 0; i < GRID_MAX; i += GRAPH_AXIS_STEP) {
-			let x = map(
-				i,
-				0,
-				GRID_MAX,
-				GRAPH_PADDING_WIDTH * p.width,
-				p.width * (1 - GRAPH_PADDING_WIDTH)
-			);
-			if (i > 0)
-				p.line(x, y - GRAPH_AXIS_LINE_HEIGHT, x, y + GRAPH_AXIS_LINE_HEIGHT);
+		{
+			const y = p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW;
+			for (let i = 0; i < GRID_MAX; i += GRAPH_AXIS_STEP) {
+				let x = map(
+					i,
+					0,
+					GRID_MAX,
+					GRAPH_PADDING_WIDTH * p.width,
+					p.width * (1 - GRAPH_PADDING_WIDTH)
+				);
+				if (i > 0)
+					p.line(x, y - GRAPH_AXIS_LINE_HEIGHT, x, y + GRAPH_AXIS_LINE_HEIGHT);
 
-			p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE);
+				p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE);
+			}
 		}
-
-		delete y;
 
 		// drawing the arrows at the end of the axis
 		// x - axis

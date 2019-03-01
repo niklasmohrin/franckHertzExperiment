@@ -1,29 +1,29 @@
 // tubeSketch.js
 // p5.js sketch file for the tube
 
-// cathode glow color
-const cr = 224;
-const cg = 92;
-const cb = 35;
+// destruct color into rgb values for later use
+const { r: cr, g: cg, b: cb } = hexToRgb(CATHODE_GLOW_COLOR);
 
 // map tube and cathode areas to new dimensions
 const recalculateBoundaries = (w, h) => {
+	const wFactor = w / ORIG_DATA.tubeWidth;
+	const hFactor = h / ORIG_DATA.tubeHeight;
 	// recalculate spawning area
-	eSpawnStartX = ORIG_DATA.eSpawnStartX * (w / ORIG_DATA.tubeWidth);
-	eSpawnStartY = ORIG_DATA.eSpawnStartY * (h / ORIG_DATA.tubeHeight);
-	eSpawnEndX = ORIG_DATA.eSpawnEndX * (w / ORIG_DATA.tubeWidth);
-	eSpawnEndY = ORIG_DATA.eSpawnEndY * (h / ORIG_DATA.tubeHeight);
-	eSpawnWidth = ORIG_DATA.eSpawnWidth * (w / ORIG_DATA.tubeWidth);
-	eSpawnHeight = ORIG_DATA.eSpawnHeight * (h / ORIG_DATA.tubeHeight);
+	eSpawnStartX = ORIG_DATA.eSpawnStartX * wFactor;
+	eSpawnStartY = ORIG_DATA.eSpawnStartY * hFactor;
+	eSpawnEndX = ORIG_DATA.eSpawnEndX * wFactor;
+	eSpawnEndY = ORIG_DATA.eSpawnEndY * hFactor;
+	eSpawnWidth = ORIG_DATA.eSpawnWidth * wFactor;
+	eSpawnHeight = ORIG_DATA.eSpawnHeight * hFactor;
 
 	// recalculate boundaries
-	eLeftBound = ORIG_DATA.eLeftBound * (w / ORIG_DATA.tubeWidth);
-	eRightBound = ORIG_DATA.eRightBound * (w / ORIG_DATA.tubeWidth);
-	eTopBound = ORIG_DATA.eTopBound * (h / ORIG_DATA.tubeHeight);
-	eBottomBound = ORIG_DATA.eBottomBound * (h / ORIG_DATA.tubeHeight);
+	eLeftBound = ORIG_DATA.eLeftBound * wFactor;
+	eRightBound = ORIG_DATA.eRightBound * wFactor;
+	eTopBound = ORIG_DATA.eTopBound * hFactor;
+	eBottomBound = ORIG_DATA.eBottomBound * hFactor;
 
 	// recalculate grid position
-	gridX = ORIG_DATA.gridX * (w / ORIG_DATA.tubeWidth);
+	gridX = ORIG_DATA.gridX * wFactor;
 };
 
 const tubeSketch = function(p) {
@@ -198,5 +198,4 @@ const tubeSketch = function(p) {
 };
 
 const tubeP5 = new p5(tubeSketch, "#tube-canvas-container");
-
 const scheduleCathodeRedraw = debounce(() => (tubeP5.cathodeDrawn = false), 5);
