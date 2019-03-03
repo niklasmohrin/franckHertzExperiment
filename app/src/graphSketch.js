@@ -12,7 +12,9 @@ const GRAPH_AXIS_LINE_HEIGHT = 2;
 const GRAPH_AXIS_LINE_SW = 1.5;
 const GRAPH_AXIS_FONT_SIZE = 10;
 const GRAPH_ARROWTIP_LENGTH = 10;
-const GRAPH_MAX_X_DIFF = 10;
+const GRAPH_MAX_X_DIFF = 3;
+const GRAPH_CUR_POINT_COLOR = "#9a4aef";
+const GRAPH_CUR_POINT_SW = 4;
 
 const graphSketch = p => {
 	p.drawDiagram = () => {
@@ -112,6 +114,27 @@ const graphSketch = p => {
 		p.points = newPoints;
 	};
 
+	p.drawCurPoint = () => {
+		p.stroke(GRAPH_CUR_POINT_COLOR);
+		p.strokeWeight(GRAPH_CUR_POINT_SW);
+		p.noFill();
+		const x = map(
+			uGrid,
+			0,
+			GRID_MAX,
+			GRAPH_PADDING_WIDTH * graphP5.width,
+			graphP5.width - GRAPH_PADDING_WIDTH * graphP5.width
+		);
+		const y = map(
+			f(uGrid),
+			0,
+			f(GRID_MAX),
+			graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
+			GRAPH_PADDING_HEIGHT * graphP5.height
+		);
+		p.point(x, y);
+	};
+
 	p.reset = () => {
 		p.noLoop();
 		p.graphCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
@@ -144,6 +167,7 @@ const graphSketch = p => {
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
 		p.drawGraph();
+		p.drawCurPoint();
 	};
 };
 
