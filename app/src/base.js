@@ -79,7 +79,21 @@ const ORIG_DATA = {
 	eRightBound: 393,
 	eTopBound: 11,
 	eBottomBound: 105,
-	gridX: 315
+	gridX: 315,
+	textPositions: {
+		width: 42,
+		height: 16,
+		yMin: 146,
+		yMax: 162,
+		uFilament: {
+			xMin: 36,
+			xMax: 78
+		},
+		uGrid: {
+			xMin: 194,
+			xMax: 238
+		}
+	}
 };
 
 // declaration and initialization of boundary variables
@@ -94,7 +108,8 @@ let {
 	eLeftBound,
 	eRightBound,
 	eTopBound,
-	eBottomBound
+	eBottomBound,
+	textPositions
 } = ORIG_DATA;
 
 // filament
@@ -153,12 +168,19 @@ const MAX_GLOWS = 10;
 const GLOW_ERROR = 0.3;
 const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
 
+// text constants
+const TEXT_FONT_FAMILY = "ARIAL";
+const TEXT_FONT_SIZE = 12;
+const TEXT_FONT_STROKE = 1;
+
 /////////////////////////////////////////////////////////////////////////
 
 // Set ranges for inputs ////////////////////////////////////////////////
 const materialInputs = document.getElementsByName("material");
 const filamentInput = document.getElementById("filament");
 const gridInput = document.getElementById("grid");
+const SPAN_UFILAMENT = document.getElementById("uFilament-text-span");
+const SPAN_UGRID = document.getElementById("uGrid-text-span");
 
 filamentInput.setAttribute("max", FILAMENT_MAX);
 gridInput.setAttribute("max", GRID_MAX);
@@ -166,7 +188,6 @@ gridInput.setAttribute("max", GRID_MAX);
 /////////////////////////////////////////////////////////////////////////
 
 // handle inputs ////////////////////////////////////////////////////////
-
 let curMaterial;
 let newEProb = 0;
 let glowProb = 0;
@@ -177,13 +198,12 @@ materialInputs.forEach(node => {
 		curMaterial = node.value;
 	});
 });
-
-// intitial trigger
+// initial trigger
 materialInputs[0].dispatchEvent(new Event("input"));
 
 // sliders
 const handleFilamentInput = () => {
-	uFilament = filamentInput.value;
+	uFilament = Number(filamentInput.value);
 	newEProb = uFilament / 20;
 	glowProb = uFilament * 0.5e-2;
 	// adjust cathode glow radius based on uFilament
@@ -197,17 +217,70 @@ const handleFilamentInput = () => {
 	// adjust to window size
 	cathodeGlowRadius *= avg(window.innerWidth, window.innerHeight) / 678.5;
 	scheduleCathodeRedraw();
+	SPAN_UFILAMENT.innerText = uFilament.toFixed(2) + " V";
 };
 
-const handleGridInput = e => {
-	uGrid = gridInput.value;
+const handleGridInput = () => {
+	uGrid = Number(gridInput.value);
 	addPoint();
 	curMaxElectrons =
 		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
+	SPAN_UGRID.innerText = uGrid.toFixed(2) + " V";
 };
 
 filamentInput.addEventListener("input", handleFilamentInput);
 gridInput.addEventListener("input", handleGridInput);
+/////////////////////////////////////////////////////////////////////////
+
+// Positioning calculations /////////////////////////////////////////////
+// map tube and cathode areas to new dimensions
+const recalculateBoundaries = (w, h) => {
+	const wFactor = w / ORIG_DATA.tubeWidth;
+	const hFactor = h / ORIG_DATA.tubeHeight;
+	// recalculate spawning area
+	eSpawnStartX = ORIG_DATA.eSpawnStartX * wFactor;
+	eSpawnStartY = ORIG_DATA.eSpawnStartY * hFactor;
+	eSpawnEndX = ORIG_DATA.eSpawnEndX * wFactor;
+	eSpawnEndY = ORIG_DATA.eSpawnEndY * hFactor;
+	eSpawnWidth = ORIG_DATA.eSpawnWidth * wFactor;
+	eSpawnHeight = ORIG_DATA.eSpawnHeight * hFactor;
+
+	// recalculate boundaries
+	eLeftBound = ORIG_DATA.eLeftBound * wFactor;
+	eRightBound = ORIG_DATA.eRightBound * wFactor;
+	eTopBound = ORIG_DATA.eTopBound * hFactor;
+	eBottomBound = ORIG_DATA.eBottomBound * hFactor;
+
+	// recalculate grid position
+	gridX = ORIG_DATA.gridX * wFactor;
+
+	// text rects
+	textPositions = {
+		width: ORIG_DATA.textPositions.width * wFactor,
+		height: ORIG_DATA.textPositions.height * hFactor,
+		yMin: ORIG_DATA.textPositions.yMin * hFactor,
+		yMax: ORIG_DATA.textPositions.yMax * hFactor,
+		uFilament: {
+			xMin: ORIG_DATA.textPositions.uFilament.xMin * wFactor,
+			xMax: ORIG_DATA.textPositions.uFilament.xMax * wFactor
+		},
+		uGrid: {
+			xMin: ORIG_DATA.textPositions.uGrid.xMin * wFactor,
+			xMax: ORIG_DATA.textPositions.uGrid.xMin * wFactor
+		}
+	};
+};
+
+const repositionSpans = () => {
+	SPAN_UFILAMENT.style.left = textPositions.uFilament.xMin.toString() + "px";
+	SPAN_UFILAMENT.style.top = textPositions.yMin.toString() + "px";
+	SPAN_UGRID.style.left = textPositions.uGrid.xMin.toString() + "px";
+	SPAN_UGRID.style.top = textPositions.yMin.toString() + "px";
+	SPAN_UFILAMENT.style.width = SPAN_UGRID.style.width =
+		textPositions.width.toString() + "px";
+	SPAN_UFILAMENT.style.height = SPAN_UGRID.style.height =
+		textPositions.height.toString() + "px";
+};
 /////////////////////////////////////////////////////////////////////////
 
 // simulation loop //////////////////////////////////////////////////////

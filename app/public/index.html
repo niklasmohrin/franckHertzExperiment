@@ -13,6 +13,8 @@
 		<div id="upper-container" class="container">
 			<div id="tube-canvas-container" class="container">
 				<img src="../assets/tube_full.png" id="tube-img" />
+				<span class="text-span" id="uFilament-text-span"></span>
+				<span class="text-span" id="uGrid-text-span"></span>
 			</div>
 		</div>
 		<div id="lower-container" class="container">
@@ -98,10 +100,17 @@
 				debounce(() => {
 					tubeP5.reset();
 					graphP5.reset();
-					filamentInput.dispatchEvent(new Event("input"));
-					gridInput.dispatchEvent(new Event("input"));
+					handleFilamentInput();
+					handleGridInput();
+					repositionSpans();
 				}, 150)
 			);
+			window.onload = () => {
+				// initial events
+				handleFilamentInput();
+				handleGridInput();
+				repositionSpans();
+			};
 		</script>
 	</body>
 </html>

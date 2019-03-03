@@ -4,28 +4,6 @@
 // destruct color into rgb values for later use
 const { r: cr, g: cg, b: cb } = hexToRgb(CATHODE_GLOW_COLOR);
 
-// map tube and cathode areas to new dimensions
-const recalculateBoundaries = (w, h) => {
-	const wFactor = w / ORIG_DATA.tubeWidth;
-	const hFactor = h / ORIG_DATA.tubeHeight;
-	// recalculate spawning area
-	eSpawnStartX = ORIG_DATA.eSpawnStartX * wFactor;
-	eSpawnStartY = ORIG_DATA.eSpawnStartY * hFactor;
-	eSpawnEndX = ORIG_DATA.eSpawnEndX * wFactor;
-	eSpawnEndY = ORIG_DATA.eSpawnEndY * hFactor;
-	eSpawnWidth = ORIG_DATA.eSpawnWidth * wFactor;
-	eSpawnHeight = ORIG_DATA.eSpawnHeight * hFactor;
-
-	// recalculate boundaries
-	eLeftBound = ORIG_DATA.eLeftBound * wFactor;
-	eRightBound = ORIG_DATA.eRightBound * wFactor;
-	eTopBound = ORIG_DATA.eTopBound * hFactor;
-	eBottomBound = ORIG_DATA.eBottomBound * hFactor;
-
-	// recalculate grid position
-	gridX = ORIG_DATA.gridX * wFactor;
-};
-
 const tubeSketch = function(p) {
 	// Drawing methods ////////////////////////////////////////////////////////////////////////////
 	p.drawElectrons = () => {
@@ -131,7 +109,6 @@ const tubeSketch = function(p) {
 		cnv.updatePixels();
 		p.cathodeDrawn = true;
 	};
-
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	// tubeP5 reset, setup and draw; glow scheduler ///////////////////////////////////////////////
@@ -162,6 +139,8 @@ const tubeSketch = function(p) {
 		// vanish canvas
 		p.background(0);
 
+		// start the loop
+		p.frameRate(50);
 		p.loop();
 	};
 
@@ -169,7 +148,6 @@ const tubeSketch = function(p) {
 		p.noLoop();
 		p.parent = window.document.getElementById("tube-canvas-container");
 		p.glows = [];
-		p.frameRate(50);
 		// initial reset
 		p.reset();
 	};
