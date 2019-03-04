@@ -152,26 +152,41 @@ const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
 const CATHODE_GLOW_MIN_RADIUS = 10;
 const CATHODE_GLOW_MAX_RADIUS = 50;
 let cathodeGlowRadius = 0;
-const CATHODE_GLOW_PADDING = 0.3;
+const CATHODE_GLOW_PADDING = 0.5;
 const CATHODE_CENTER_WIDTH = 0.05;
 const CATHODE_CENTER_HEIGHT = 0.12;
 
 // material glow constants
-const GLOW_RADIUS = 10;
-const GLOW_FADE = 10;
-
-// material glow area constants
 const GLOW_OFFSET = { mercury: 0.4, neon: 0 };
 const GLOW_DISTANCE = { mercury: 4.9, neon: 18.7 };
-const MIN_GLOWS = 2;
-const MAX_GLOWS = 10;
 const GLOW_ERROR = 0.3;
 const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
+const GLOW_RADIUS = 10;
+const GLOW_FADE = 10;
+const MIN_GLOWS = 2;
+const MAX_GLOWS = 10;
 
 // text constants
 const TEXT_FONT_FAMILY = "ARIAL";
 const TEXT_FONT_SIZE = 12;
 const TEXT_FONT_STROKE = 1;
+
+// Graph constants
+const GRAPH_STROKE = "blue";
+const GRAPH_SW = 2;
+const GRAPH_AXIS_STROKE = "white";
+const GRAPH_AXIS_SW = 2.5;
+const GRAPH_PADDING_HEIGHT = 0.15;
+const GRAPH_PADDING_WIDTH = 0.1;
+const GRAPH_AXIS_STEP = 5;
+const GRAPH_AXIS_LINE_HEIGHT = 2;
+const GRAPH_AXIS_LINE_SW = 1.5;
+const GRAPH_AXIS_FONT_SIZE = 10;
+const GRAPH_ARROWTIP_LENGTH = 10;
+const GRAPH_MAX_X_DIFF = 3;
+const GRAPH_CUR_POINT_COLOR = "#9a4aef";
+const GRAPH_CUR_POINT_SW = 4;
+const GRAPH_FRAMERATE = 30;
 
 /////////////////////////////////////////////////////////////////////////
 

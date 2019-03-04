@@ -1,21 +1,6 @@
 // graphSketch.js
 // p5.js sketch file for the graph
 
-const GRAPH_STROKE = "blue";
-const GRAPH_SW = 2;
-const GRAPH_AXIS_STROKE = "white";
-const GRAPH_AXIS_SW = 2.5;
-const GRAPH_PADDING_HEIGHT = 0.15;
-const GRAPH_PADDING_WIDTH = 0.1;
-const GRAPH_AXIS_STEP = 5;
-const GRAPH_AXIS_LINE_HEIGHT = 2;
-const GRAPH_AXIS_LINE_SW = 1.5;
-const GRAPH_AXIS_FONT_SIZE = 10;
-const GRAPH_ARROWTIP_LENGTH = 10;
-const GRAPH_MAX_X_DIFF = 3;
-const GRAPH_CUR_POINT_COLOR = "#9a4aef";
-const GRAPH_CUR_POINT_SW = 4;
-
 const graphSketch = p => {
 	p.drawDiagram = () => {
 		p.background(0);
@@ -152,13 +137,13 @@ const graphSketch = p => {
 		p.prevWidth = p.parent.clientWidth;
 		p.prevHeight = p.parent.clientHeight;
 
+		p.frameRate(GRAPH_FRAMERATE);
 		p.loop();
 	};
 
 	p.setup = () => {
 		p.parent = window.document.getElementById("graph-canvas-container");
 		p.points = {};
-		p.frameRate(10);
 		p.reset();
 	};
 
