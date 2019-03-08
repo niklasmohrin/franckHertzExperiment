@@ -50,6 +50,3 @@ const simulation = () => {
 		curArea += GLOW_DISTANCE[curMaterial];
 	}
 };
-
-// scheduling the simulation interval
-let simulationInterval = setInterval(simulation, SIMULATION_TIMEOUT_MS);

@@ -128,8 +128,35 @@ const ELECTRON_ACC_MIN = 0;
 const ELECTRON_ACC_MAX = 0.05;
 
 // mapping U to I
-const f = U =>
-	Math.sin(map(U % 4.7, 0, 4.7, 0, (5 / 6) * Math.PI)) * Math.exp(U / 20);
+// const f = U =>
+// 	Math.sin(map(U % 4.7, 0, 4.7, 0, (5 / 6) * Math.PI)) * Math.exp(U / 20);
+
+const CURVE_EXP_END = 4.5;
+const AMPERAGE_MAX = 350;
+
+const f = U => {
+	if (U < 0) throw new Error("U < 0, WTF");
+	if (U > GRID_MAX) throw new Error("U > GRID_MAX, LOL");
+
+	if (U < CURVE_EXP_END) {
+		return Math.exp(U);
+	} else {
+		// return (U - CURVE_EXP_END) ** 2 + f(CURVE_EXP_END - 1e-10);
+		// const x = U - CURVE_EXP_END - 1.7;
+		// const x = map(U, CURVE_EXP_END, GRID_MAX, -1.6, 1.6);
+		const x = (U % 4.7) + CURVE_EXP_END - 1;
+		// const y = 20 * x ** 3 - 60 * x;
+
+		const y =
+			-1.5949877858624903e4 +
+			1.1425064961616923e4 * x +
+			-2.9524558245293174e3 * x ** 2 +
+			3.2897568713336204e2 * x ** 3 +
+			-1.3369929255142154e1 * x ** 4;
+		return y + f(CURVE_EXP_END - 1e-10);
+	}
+};
+
 // TODO: add f(U) to be realistic
 
 /////////////////////////////////////////////////////////////////////////
@@ -144,8 +171,8 @@ let curMaxElectrons = 0;
 let electrons = [];
 
 // colors
-const ELECTRON_COLOR = "#4081e8"; //"#4e27b2"; //"#640ac8";
-const CATHODE_GLOW_COLOR = "#e05c23"; // TODO: use this, not hard-coded vals in tubeSketch.js
+const ELECTRON_COLOR = "#4081e8";
+const CATHODE_GLOW_COLOR = "#e05c23";
 const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
 
 // cathode glow
@@ -236,8 +263,9 @@ const handleFilamentInput = () => {
 };
 
 const handleGridInput = () => {
-	uGrid = Number(gridInput.value);
-	addPoint();
+	// FIXME: uncomment this again then
+	// uGrid = Number(gridInput.value);
+	addPoint(uGrid, f(uGrid));
 	curMaxElectrons =
 		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
 	SPAN_UGRID.innerText = uGrid.toFixed(2) + " V";
@@ -245,6 +273,20 @@ const handleGridInput = () => {
 
 filamentInput.addEventListener("input", handleFilamentInput);
 gridInput.addEventListener("input", handleGridInput);
+
+///////////////////////////////////////////////
+
+// temporary grid slider change
+
+// FIXME: remove this
+let gridInterval = setInterval(() => {
+	uGrid += 0.01;
+	uGrid %= GRID_MAX;
+	handleGridInput();
+}, 2);
+
+////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////////////
 
 // Positioning calculations /////////////////////////////////////////////

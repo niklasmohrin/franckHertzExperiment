@@ -107,6 +107,8 @@
 			);
 			window.onload = () => {
 				// initial events
+				// scheduling the simulation interval
+				let simulationInterval = setInterval(simulation, SIMULATION_TIMEOUT_MS);
 				handleFilamentInput();
 				handleGridInput();
 				repositionSpans();

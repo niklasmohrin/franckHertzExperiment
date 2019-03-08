@@ -113,7 +113,7 @@ const graphSketch = p => {
 		const y = map(
 			f(uGrid),
 			0,
-			f(GRID_MAX),
+			AMPERAGE_MAX,
 			graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
 			GRAPH_PADDING_HEIGHT * graphP5.height
 		);
@@ -125,6 +125,7 @@ const graphSketch = p => {
 		p.graphCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
 		p.graphCnv.parent(p.parent);
 		p.graphCnv.id("graph-canvas");
+		p.pixelDensity(1);
 
 		p.drawDiagram();
 
@@ -158,20 +159,20 @@ const graphSketch = p => {
 
 const graphP5 = new p5(graphSketch, "#graph-canvas-container");
 
-const addPoint = () => {
+function addPoint(_x, _y) {
 	const x = map(
-		uGrid,
+		_x,
 		0,
 		GRID_MAX,
 		GRAPH_PADDING_WIDTH * graphP5.width,
 		graphP5.width - GRAPH_PADDING_WIDTH * graphP5.width
 	);
 	const y = map(
-		f(uGrid),
+		_y,
 		0,
-		f(GRID_MAX),
+		AMPERAGE_MAX,
 		graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
 		GRAPH_PADDING_HEIGHT * graphP5.height
 	);
 	graphP5.points[x] = y;
-};
+}
