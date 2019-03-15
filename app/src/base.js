@@ -58,7 +58,6 @@ const hexToRgb = hex => {
 };
 
 const abs = x => (x < 0 ? -x : x);
-
 /////////////////////////////////////////////////////////////////////////
 
 // physics constants ////////////////////////////////////////////////////
@@ -127,38 +126,29 @@ const ELECTRON_CHARGE = 1.6e-19;
 const ELECTRON_ACC_MIN = 0;
 const ELECTRON_ACC_MAX = 0.05;
 
-// mapping U to I
-// const f = U =>
-// 	Math.sin(map(U % 4.7, 0, 4.7, 0, (5 / 6) * Math.PI)) * Math.exp(U / 20);
-
-const CURVE_EXP_END = 4.5;
 const AMPERAGE_MAX = 350;
+let curAmperage = 0;
 
+// mapping of grid voltage to amperage
+// the data is read from images and saved in the json format
+const dataPoints = require("../src/pointData.json");
+dataPoints.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));
 const f = U => {
-	if (U < 0) throw new Error("U < 0, WTF");
-	if (U > GRID_MAX) throw new Error("U > GRID_MAX, LOL");
-
-	if (U < CURVE_EXP_END) {
-		return Math.exp(U);
-	} else {
-		// return (U - CURVE_EXP_END) ** 2 + f(CURVE_EXP_END - 1e-10);
-		// const x = U - CURVE_EXP_END - 1.7;
-		// const x = map(U, CURVE_EXP_END, GRID_MAX, -1.6, 1.6);
-		const x = (U % 4.7) + CURVE_EXP_END - 1;
-		// const y = 20 * x ** 3 - 60 * x;
-
-		const y =
-			-1.5949877858624903e4 +
-			1.1425064961616923e4 * x +
-			-2.9524558245293174e3 * x ** 2 +
-			3.2897568713336204e2 * x ** 3 +
-			-1.3369929255142154e1 * x ** 4;
-		return y + f(CURVE_EXP_END - 1e-10);
+	// find the closest voltage in the sorted data set with binary search
+	let start = 0;
+	let stop = dataPoints.length - 1;
+	let middle = Math.floor((start + stop) / 2);
+	while (dataPoints[middle][0] !== U && start < stop) {
+		middle = Math.floor((start + stop) / 2);
+		if (U < dataPoints[middle][0]) {
+			stop = middle - 1;
+		} else {
+			start = middle + 1;
+		}
 	}
+	// and return the corresponding amperage
+	return dataPoints[middle][1];
 };
-
-// TODO: add f(U) to be realistic
-
 /////////////////////////////////////////////////////////////////////////
 
 // design constants /////////////////////////////////////////////////////
@@ -217,13 +207,10 @@ const GRAPH_FRAMERATE = 30;
 const GRAPH_X_ACCURACY = 300;
 const GRAPH_Y_ACCURACY = 300;
 const GRAPH_POINTS_ARR_LEN = GRID_MAX * GRAPH_X_ACCURACY;
-
 const measuredPoints = new Array(GRAPH_POINTS_ARR_LEN);
-
 const addPoint = (x, y) => {
 	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY)] = y * GRAPH_Y_ACCURACY;
 };
-
 /////////////////////////////////////////////////////////////////////////
 
 // Set ranges for inputs ////////////////////////////////////////////////
@@ -235,7 +222,6 @@ const SPAN_UGRID = document.getElementById("uGrid-text-span");
 
 filamentInput.setAttribute("max", FILAMENT_MAX);
 gridInput.setAttribute("max", GRID_MAX);
-
 /////////////////////////////////////////////////////////////////////////
 
 // handle inputs ////////////////////////////////////////////////////////
@@ -272,9 +258,9 @@ const handleFilamentInput = () => {
 };
 
 const handleGridInput = () => {
-	// FIXME: uncomment this again then
-	// uGrid = Number(gridInput.value);
-	addPoint(uGrid, f(uGrid));
+	uGrid = Number(gridInput.value);
+	curAmperage = f(uGrid);
+	addPoint(uGrid, curAmperage);
 	curMaxElectrons =
 		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
 	SPAN_UGRID.innerText = uGrid.toFixed(2) + " V";
@@ -283,16 +269,15 @@ const handleGridInput = () => {
 filamentInput.addEventListener("input", handleFilamentInput);
 gridInput.addEventListener("input", handleGridInput);
 
-///////////////////////////////////////////////
-
 // temporary grid slider change
 
 // FIXME: remove this
-let gridInterval = setInterval(() => {
-	uGrid += 0.01;
-	uGrid %= GRID_MAX;
-	handleGridInput();
-}, 2);
+// let gridInterval = setInterval(() => {
+// 	uGrid += 0.01;
+// 	uGrid %= GRID_MAX;
+// 	handleGridInput();
+// }, 2);
+///////////////////////////////////////////////
 
 ////////////////////////////////////////////////////
 

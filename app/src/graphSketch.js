@@ -5,10 +5,12 @@ const graphSketch = p => {
 	p.drawDiagram = () => {
 		p.background(0);
 
+		// set color
 		p.stroke(GRAPH_AXIS_STROKE);
 		p.strokeWeight(GRAPH_AXIS_SW);
 		p.noFill();
 
+		// draw axis
 		p.line(
 			GRAPH_PADDING_WIDTH * p.width - GRAPH_SW,
 			p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW,
@@ -77,6 +79,7 @@ const graphSketch = p => {
 		);
 	};
 
+	// map the voltage to coordinates on the canvas
 	p.mapToCnv = _x => {
 		const x = map(
 			_x / GRAPH_X_ACCURACY,
@@ -96,6 +99,7 @@ const graphSketch = p => {
 		return [x, y];
 	};
 
+	// draw the actual curve
 	p.drawGraph = () => {
 		p.beginShape();
 		for (let _x = 0; _x < GRAPH_POINTS_ARR_LEN; _x++) {
@@ -106,6 +110,7 @@ const graphSketch = p => {
 		p.smooth();
 	};
 
+	// highlight the current position / voltage
 	p.drawCurPoint = () => {
 		p.stroke(GRAPH_CUR_POINT_COLOR);
 		p.strokeWeight(GRAPH_CUR_POINT_SW);
@@ -151,8 +156,6 @@ const graphSketch = p => {
 
 	p.setup = () => {
 		p.parent = window.document.getElementById("graph-canvas-container");
-		// p.points = {};
-		// p.points = new Array(GRAPH_POINTS_ARR_LEN);
 		p.reset();
 	};
 
