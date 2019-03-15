@@ -77,26 +77,33 @@ const graphSketch = p => {
 		);
 	};
 
-	p.drawGraph = () => {
-		const keys = Object.keys(p.points)
-			.map(parseFloat)
-			.sort();
-		for (let i = 1; i < keys.length; i++) {
-			if (abs(keys[i - 1] - keys[i]) < GRAPH_MAX_X_DIFF)
-				p.line(keys[i - 1], p.points[keys[i - 1]], keys[i], p.points[keys[i]]);
-		}
-		p.smooth();
+	p.mapToCnv = _x => {
+		const x = map(
+			_x / GRAPH_X_ACCURACY,
+			0,
+			GRID_MAX,
+			GRAPH_PADDING_WIDTH * p.width,
+			p.width - GRAPH_PADDING_WIDTH * p.width
+		);
+		const y = map(
+			measuredPoints[_x] / GRAPH_Y_ACCURACY,
+			0,
+			AMPERAGE_MAX,
+			p.height - GRAPH_PADDING_HEIGHT * p.height,
+			GRAPH_PADDING_HEIGHT * p.height
+		);
+
+		return [x, y];
 	};
 
-	p.recalcPoints = () => {
-		const wFactor = p.parent.clientWidth / p.prevWidth;
-		const hFactor = p.parent.clientHeight / p.prevHeight;
-		const keys = Object.keys(p.points);
-		const newPoints = {};
-		keys.forEach(key => {
-			newPoints[key * wFactor] = p.points[key] * hFactor;
-		});
-		p.points = newPoints;
+	p.drawGraph = () => {
+		p.beginShape();
+		for (let _x = 0; _x < GRAPH_POINTS_ARR_LEN; _x++) {
+			const [x, y] = p.mapToCnv(_x);
+			p.vertex(x, y);
+		}
+		p.endShape();
+		p.smooth();
 	};
 
 	p.drawCurPoint = () => {
@@ -132,7 +139,7 @@ const graphSketch = p => {
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
 
-		p.recalcPoints();
+		// p.recalcPoints();
 		p.drawGraph();
 
 		p.prevWidth = p.parent.clientWidth;
@@ -144,7 +151,8 @@ const graphSketch = p => {
 
 	p.setup = () => {
 		p.parent = window.document.getElementById("graph-canvas-container");
-		p.points = {};
+		// p.points = {};
+		// p.points = new Array(GRAPH_POINTS_ARR_LEN);
 		p.reset();
 	};
 
@@ -158,21 +166,3 @@ const graphSketch = p => {
 };
 
 const graphP5 = new p5(graphSketch, "#graph-canvas-container");
-
-function addPoint(_x, _y) {
-	const x = map(
-		_x,
-		0,
-		GRID_MAX,
-		GRAPH_PADDING_WIDTH * graphP5.width,
-		graphP5.width - GRAPH_PADDING_WIDTH * graphP5.width
-	);
-	const y = map(
-		_y,
-		0,
-		AMPERAGE_MAX,
-		graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
-		GRAPH_PADDING_HEIGHT * graphP5.height
-	);
-	graphP5.points[x] = y;
-}

@@ -214,6 +214,15 @@ const GRAPH_MAX_X_DIFF = 3;
 const GRAPH_CUR_POINT_COLOR = "#9a4aef";
 const GRAPH_CUR_POINT_SW = 4;
 const GRAPH_FRAMERATE = 30;
+const GRAPH_X_ACCURACY = 300;
+const GRAPH_Y_ACCURACY = 300;
+const GRAPH_POINTS_ARR_LEN = GRID_MAX * GRAPH_X_ACCURACY;
+
+const measuredPoints = new Array(GRAPH_POINTS_ARR_LEN);
+
+const addPoint = (x, y) => {
+	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY)] = y * GRAPH_Y_ACCURACY;
+};
 
 /////////////////////////////////////////////////////////////////////////
 
