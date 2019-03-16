@@ -85,12 +85,16 @@ const ORIG_DATA = {
 		yMin: 146,
 		yMax: 162,
 		uFilament: {
-			xMin: 36,
-			xMax: 78
+			xMin: 40,
+			xMax: 82
 		},
 		uGrid: {
-			xMin: 194,
-			xMax: 238
+			xMin: 200,
+			xMax: 242
+		},
+		amperage: {
+			xMin: 390,
+			xMax: 432
 		}
 	}
 };
@@ -124,7 +128,7 @@ let uGrid = 0;
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const ELECTRON_ACC_MIN = 0;
-const ELECTRON_ACC_MAX = 0.05;
+const ELECTRON_ACC_MAX = 0.04;
 
 const AMPERAGE_MAX = 350;
 let curAmperage = 0;
@@ -155,7 +159,7 @@ const f = U => {
 
 // electrons
 const ELECTRON_RADIUS = 2; //px
-const MAX_ELECTRONS = 200;
+const MAX_ELECTRONS = 180;
 const MIN_ELECTRONS = 10; // if filament voltage is applied
 let curMaxElectrons = 0;
 let electrons = [];
@@ -219,6 +223,7 @@ const filamentInput = document.getElementById("filament");
 const gridInput = document.getElementById("grid");
 const SPAN_UFILAMENT = document.getElementById("uFilament-text-span");
 const SPAN_UGRID = document.getElementById("uGrid-text-span");
+const SPAN_AMPERAGE = document.getElementById("amperage-text-span");
 
 filamentInput.setAttribute("max", FILAMENT_MAX);
 gridInput.setAttribute("max", GRID_MAX);
@@ -264,6 +269,7 @@ const handleGridInput = () => {
 	curMaxElectrons =
 		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
 	SPAN_UGRID.innerText = uGrid.toFixed(2) + " V";
+	SPAN_AMPERAGE.innerText = curAmperage.toFixed(2) + " A";
 };
 
 filamentInput.addEventListener("input", handleFilamentInput);
@@ -318,18 +324,24 @@ const recalculateBoundaries = (w, h) => {
 		uGrid: {
 			xMin: ORIG_DATA.textPositions.uGrid.xMin * wFactor,
 			xMax: ORIG_DATA.textPositions.uGrid.xMin * wFactor
+		},
+		amperage: {
+			xMin: ORIG_DATA.textPositions.amperage.xMin * wFactor,
+			xMax: ORIG_DATA.textPositions.amperage.xMax * wFactor
 		}
 	};
 };
 
 const repositionSpans = () => {
 	SPAN_UFILAMENT.style.left = textPositions.uFilament.xMin.toString() + "px";
-	SPAN_UFILAMENT.style.top = textPositions.yMin.toString() + "px";
 	SPAN_UGRID.style.left = textPositions.uGrid.xMin.toString() + "px";
-	SPAN_UGRID.style.top = textPositions.yMin.toString() + "px";
+	SPAN_AMPERAGE.style.left = textPositions.amperage.xMin.toString() + "px";
+	SPAN_UFILAMENT.style.top = SPAN_UGRID.style.top = SPAN_AMPERAGE.style.top =
+		textPositions.yMin.toString() + "px";
 	SPAN_UFILAMENT.style.width = SPAN_UGRID.style.width =
-		textPositions.width.toString() + "px";
-	SPAN_UFILAMENT.style.height = SPAN_UGRID.style.height =
+		SPAN_AMPERAGE.style.width;
+	textPositions.width.toString() + "px";
+	SPAN_UFILAMENT.style.height = SPAN_UGRID.style.height = SPAN_AMPERAGE.style.height =
 		textPositions.height.toString() + "px";
 };
 /////////////////////////////////////////////////////////////////////////
