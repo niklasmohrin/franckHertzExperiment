@@ -24,28 +24,6 @@ const graphSketch = p => {
 			p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW
 		);
 
-		p.strokeWeight(GRAPH_AXIS_LINE_SW);
-		p.textSize(GRAPH_AXIS_FONT_SIZE);
-		p.textAlign(p.CENTER, p.CENTER);
-
-		// labeling the x axis
-		{
-			const y = p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW;
-			for (let i = 0; i < GRID_MAX; i += GRAPH_AXIS_STEP) {
-				let x = map(
-					i,
-					0,
-					GRID_MAX,
-					GRAPH_PADDING_WIDTH * p.width,
-					p.width * (1 - GRAPH_PADDING_WIDTH)
-				);
-				if (i > 0)
-					p.line(x, y - GRAPH_AXIS_LINE_HEIGHT, x, y + GRAPH_AXIS_LINE_HEIGHT);
-
-				p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE);
-			}
-		}
-
 		// drawing the arrows at the end of the axis
 		// x - axis
 		p.line(
@@ -77,6 +55,58 @@ const graphSketch = p => {
 			GRAPH_PADDING_WIDTH * p.width - GRAPH_ARROWTIP_LENGTH - GRAPH_AXIS_SW / 2,
 			GRAPH_PADDING_HEIGHT * p.height + GRAPH_ARROWTIP_LENGTH
 		);
+
+		p.strokeWeight(GRAPH_AXIS_LINE_SW);
+		p.textSize(GRAPH_AXIS_FONT_SIZE);
+		p.textAlign(p.CENTER, p.CENTER);
+
+		// labeling the x axis
+		{
+			const y = p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW;
+			for (let i = 0; i < GRID_MAX; i += GRAPH_X_AXIS_STEP) {
+				let x = map(
+					i,
+					0,
+					GRID_MAX,
+					GRAPH_PADDING_WIDTH * p.width,
+					p.width * (1 - GRAPH_PADDING_WIDTH)
+				);
+				if (i > 0)
+					p.line(x, y - GRAPH_AXIS_LINE_HEIGHT, x, y + GRAPH_AXIS_LINE_HEIGHT);
+
+				p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE);
+			}
+
+			p.text(
+				"U in V",
+				p.width * (1 - GRAPH_PADDING_WIDTH),
+				y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE
+			);
+		}
+
+		// labeling the y axis
+		{
+			const x = p.width * GRAPH_PADDING_WIDTH - GRAPH_SW;
+			for (let i = 0; i < AMPERAGE_MAX; i += GRAPH_Y_AXIS_STEP) {
+				let y = map(
+					i,
+					0,
+					AMPERAGE_MAX,
+					p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW,
+					GRAPH_PADDING_HEIGHT * p.height
+				);
+				if (i > 0)
+					p.line(x - GRAPH_AXIS_LINE_HEIGHT, y, x + GRAPH_AXIS_LINE_HEIGHT, y);
+
+				p.text(i, x - GRAPH_AXIS_LINE_HEIGHT - GRAPH_AXIS_FONT_SIZE, y);
+			}
+
+			p.text(
+				"I in A",
+				x - GRAPH_AXIS_LINE_HEIGHT - GRAPH_AXIS_FONT_SIZE,
+				p.height * GRAPH_PADDING_HEIGHT
+			);
+		}
 	};
 
 	// map the voltage to coordinates on the canvas
