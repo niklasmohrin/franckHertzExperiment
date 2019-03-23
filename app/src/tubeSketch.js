@@ -55,6 +55,7 @@ const tubeSketch = function(p) {
 
 		// recreate cathode canvas
 		delete p.cathodeCnv;
+		document.body.removeChild(document.body.lastChild);
 		const w = p.cathodeCnvRect.max.x - p.cathodeCnvRect.min.x;
 		const h = p.cathodeCnvRect.max.y - p.cathodeCnvRect.min.y;
 		p.cathodeCnv = p.createGraphics(w, h);

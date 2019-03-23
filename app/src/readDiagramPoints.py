@@ -27,7 +27,8 @@ else:
 	amperageMax = 350
 	outFilename = "pointData.json"
 
-lineColor = (19,21,22,255)
+# lineColor = (19,21,22,255)
+lineColor = (255, 4, 0)
 
 print("Reading points with color {} from {}".format(lineColor, imgFileName))
 print("Scaling: Maximum Voltage is {} and maximum Amperage is {}".format(voltageMax, amperageMax))
@@ -49,14 +50,14 @@ def getXY(index):
 foundPoints = []
 
 for i,t in enumerate(data):
-	if t == lineColor:
+	if t[:3] == lineColor:
 		coords = getXY(i)
 		foundPoints.append(coords)
 
 def mapVal(x,xmin,xmax,ymin,ymax):
 	return (((x - xmin) / (xmax - xmin)) * (ymax - ymin) + ymin)
 
-foundCoords = list(sorted(map(lambda t: (mapVal(t[0],0,w,voltageMax,0), mapVal(t[1],0,h,0,amperageMax)), foundPoints)))
+foundCoords = list(sorted(map(lambda t: (mapVal(t[0],0,w,0, voltageMax), mapVal(t[1],0,h,amperageMax, 0)), foundPoints)))
 
 print("Saving {} datapoints to {}".format(len(foundCoords), outFilename))
 

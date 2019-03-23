@@ -66,35 +66,35 @@ const abs = x => (x < 0 ? -x : x);
 
 // postinions of several boundaries at dimensions tubeWidth * tubeHeight
 const ORIG_DATA = {
-	tubeWidth: 460,
-	tubeHeight: 208,
-	eSpawnStartX: 79,
-	eSpawnStartY: 29,
-	eSpawnEndX: 115,
-	eSpawnEndY: 91,
-	eSpawnWidth: 115 - 79,
-	eSpawnHeight: 91 - 29,
-	eLeftBound: 57,
-	eRightBound: 393,
-	eTopBound: 11,
-	eBottomBound: 105,
-	gridX: 315,
+	tubeWidth: 1920,
+	tubeHeight: 819,
+	eSpawnStartX: 288,
+	eSpawnStartY: 157,
+	eSpawnEndX: 418,
+	eSpawnEndY: 454,
+	eSpawnWidth: 418 - 288,
+	eSpawnHeight: 454 - 157,
+	eLeftBound: 286,
+	eRightBound: 1670,
+	eTopBound: 84,
+	eBottomBound: 512,
+	gridX: 1380,
 	textPositions: {
-		width: 42,
-		height: 16,
-		yMin: 146,
-		yMax: 162,
+		width: 140,
+		height: 58,
+		yMin: 566,
+		yMax: 624,
 		uFilament: {
-			xMin: 40,
-			xMax: 82
+			xMin: 167,
+			xMax: 307
 		},
 		uGrid: {
-			xMin: 200,
-			xMax: 242
+			xMin: 830,
+			xMax: 970
 		},
 		amperage: {
-			xMin: 390,
-			xMax: 432
+			xMin: 1690,
+			xMax: 1830
 		}
 	}
 };
@@ -130,7 +130,7 @@ const ELECTRON_CHARGE = 1.6e-19;
 const ELECTRON_ACC_MIN = 0;
 const ELECTRON_ACC_MAX = 0.04;
 
-const AMPERAGE_MAX = 350;
+const AMPERAGE_MAX = 500;
 let curAmperage = 0;
 
 // mapping of grid voltage to amperage
