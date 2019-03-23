@@ -84,19 +84,11 @@ const ORIG_DATA = {
 		height: 58,
 		yMin: 566,
 		yMax: 624,
-		uFilament: {
-			xMin: 167,
-			xMax: 307
-		},
-		uGrid: {
-			xMin: 830,
-			xMax: 970
-		},
-		amperage: {
-			xMin: 1690,
-			xMax: 1830
-		}
-	}
+		uFilamentX: 235,
+		uGridX: 890,
+		amperageX: 1750
+	},
+	textFontSize: 40
 };
 
 // declaration and initialization of boundary variables
@@ -112,7 +104,8 @@ let {
 	eRightBound,
 	eTopBound,
 	eBottomBound,
-	textPositions
+	textPositions,
+	textFontSize
 } = ORIG_DATA;
 
 // filament
@@ -193,7 +186,6 @@ const MAX_GLOWS = 10;
 
 // text constants
 const TEXT_FONT_FAMILY = "ARIAL";
-const TEXT_FONT_SIZE = 12;
 const TEXT_FONT_STROKE = 1;
 
 // Graph constants
@@ -244,6 +236,7 @@ let curMaterial;
 let newEProb = 0;
 let glowProb = 0;
 let uFilamentChanged = false;
+let resizing = false;
 
 // radio group
 materialInputs.forEach(node => {
@@ -271,7 +264,7 @@ const handleFilamentInput = () => {
 	cathodeGlowRadius *= avg(window.innerWidth, window.innerHeight) / 678.5;
 	scheduleCathodeRedraw();
 	SPAN_UFILAMENT.innerText = uFilament.toFixed(2) + " V";
-	uFilamentChanged = true;
+	uFilamentChanged = !resizing;
 };
 
 const handleGridInput = () => {
@@ -333,25 +326,21 @@ const recalculateBoundaries = (w, h) => {
 		height: ORIG_DATA.textPositions.height * hFactor,
 		yMin: ORIG_DATA.textPositions.yMin * hFactor,
 		yMax: ORIG_DATA.textPositions.yMax * hFactor,
-		uFilament: {
-			xMin: ORIG_DATA.textPositions.uFilament.xMin * wFactor,
-			xMax: ORIG_DATA.textPositions.uFilament.xMax * wFactor
-		},
-		uGrid: {
-			xMin: ORIG_DATA.textPositions.uGrid.xMin * wFactor,
-			xMax: ORIG_DATA.textPositions.uGrid.xMin * wFactor
-		},
-		amperage: {
-			xMin: ORIG_DATA.textPositions.amperage.xMin * wFactor,
-			xMax: ORIG_DATA.textPositions.amperage.xMax * wFactor
-		}
+		uFilamentX: ORIG_DATA.textPositions.uFilamentX * wFactor,
+		uGridX: ORIG_DATA.textPositions.uGridX * wFactor,
+		amperageX: ORIG_DATA.textPositions.amperageX * wFactor
 	};
+
+	textFontSize = ORIG_DATA.textFontSize * avg(wFactor, hFactor);
 };
 
 const repositionSpans = () => {
-	SPAN_UFILAMENT.style.left = textPositions.uFilament.xMin.toString() + "px";
-	SPAN_UGRID.style.left = textPositions.uGrid.xMin.toString() + "px";
-	SPAN_AMPERAGE.style.left = textPositions.amperage.xMin.toString() + "px";
+	SPAN_UFILAMENT.style.left =
+		(textPositions.uFilamentX - textPositions.width / 2).toString() + "px";
+	SPAN_UGRID.style.left =
+		(textPositions.uGridX - textPositions.width / 2).toString() + "px";
+	SPAN_AMPERAGE.style.left =
+		(textPositions.amperageX - textPositions.width / 2).toString() + "px";
 	SPAN_UFILAMENT.style.top = SPAN_UGRID.style.top = SPAN_AMPERAGE.style.top =
 		textPositions.yMin.toString() + "px";
 	SPAN_UFILAMENT.style.width = SPAN_UGRID.style.width =
@@ -359,6 +348,9 @@ const repositionSpans = () => {
 	textPositions.width.toString() + "px";
 	SPAN_UFILAMENT.style.height = SPAN_UGRID.style.height = SPAN_AMPERAGE.style.height =
 		textPositions.height.toString() + "px";
+
+	SPAN_UFILAMENT.style.fontSize = SPAN_UGRID.style.fontSize = SPAN_AMPERAGE.style.fontSize =
+		textFontSize.toString() + "px";
 };
 /////////////////////////////////////////////////////////////////////////
 

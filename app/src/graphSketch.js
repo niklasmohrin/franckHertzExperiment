@@ -57,7 +57,7 @@ const graphSketch = p => {
 		);
 
 		p.strokeWeight(GRAPH_AXIS_LINE_SW);
-		p.textSize(GRAPH_AXIS_FONT_SIZE);
+		p.textSize(textFontSize * 0.7);
 		p.textAlign(p.CENTER, p.CENTER);
 
 		// labeling the x axis
@@ -74,13 +74,13 @@ const graphSketch = p => {
 				if (i > 0)
 					p.line(x, y - GRAPH_AXIS_LINE_HEIGHT, x, y + GRAPH_AXIS_LINE_HEIGHT);
 
-				p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE);
+				p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + textFontSize * 0.7);
 			}
 
 			p.text(
 				"U in V",
 				p.width * (1 - GRAPH_PADDING_WIDTH),
-				y + GRAPH_AXIS_LINE_HEIGHT + GRAPH_AXIS_FONT_SIZE
+				y + (GRAPH_AXIS_LINE_HEIGHT + textFontSize * 0.7) * 1.3
 			);
 		}
 
@@ -98,13 +98,13 @@ const graphSketch = p => {
 				if (i > 0)
 					p.line(x - GRAPH_AXIS_LINE_HEIGHT, y, x + GRAPH_AXIS_LINE_HEIGHT, y);
 
-				p.text(i, x - GRAPH_AXIS_LINE_HEIGHT - GRAPH_AXIS_FONT_SIZE, y);
+				p.text(i, x - GRAPH_AXIS_LINE_HEIGHT - textFontSize * 0.7, y);
 			}
 
 			p.text(
 				"I in A",
-				x - GRAPH_AXIS_LINE_HEIGHT - GRAPH_AXIS_FONT_SIZE,
-				p.height * GRAPH_PADDING_HEIGHT
+				x - GRAPH_AXIS_LINE_HEIGHT - textFontSize * 0.7,
+				p.height * GRAPH_PADDING_HEIGHT * 0.7
 			);
 		}
 	};

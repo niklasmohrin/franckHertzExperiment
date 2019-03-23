@@ -99,11 +99,13 @@
 			window.addEventListener(
 				"resize",
 				debounce(() => {
+					resizing = true;
 					tubeP5.reset();
 					graphP5.reset();
 					handleFilamentInput();
 					handleGridInput();
 					repositionSpans();
+					resizing = false;
 				}, 150)
 			);
 			window.onload = () => {
