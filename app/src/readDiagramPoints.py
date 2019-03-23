@@ -4,8 +4,6 @@
 import sys
 from PIL import Image
 
-print(sys.argv)
-
 if len(sys.argv) > 4:
 	imgFileName = sys.argv[-4]
 	voltageMax = float(sys.argv[-3])
@@ -57,7 +55,7 @@ for i,t in enumerate(data):
 def mapVal(x,xmin,xmax,ymin,ymax):
 	return (((x - xmin) / (xmax - xmin)) * (ymax - ymin) + ymin)
 
-foundCoords = list(sorted(map(lambda t: (mapVal(t[0],0,w,0, voltageMax), mapVal(t[1],0,h,amperageMax, 0)), foundPoints)))
+foundCoords = [(0,0)] + list(sorted(filter(lambda t: t[0] > 0 ,map(lambda t: (mapVal(t[0],0,w,0, voltageMax), mapVal(t[1],0,h,amperageMax, 0)), foundPoints))))
 
 print("Saving {} datapoints to {}".format(len(foundCoords), outFilename))
 
