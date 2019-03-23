@@ -117,6 +117,7 @@ let {
 
 // filament
 const FILAMENT_MAX = 10;
+const FILAMENT_MULTIPLIER_MIN = 0.3;
 let uFilament = 0;
 
 // grid
@@ -151,7 +152,10 @@ const f = U => {
 		}
 	}
 	// and return the corresponding amperage
-	return dataPoints[middle][1];
+	return (
+		dataPoints[middle][1] *
+		map(uFilament, 0, FILAMENT_MAX, FILAMENT_MULTIPLIER_MIN, 1)
+	);
 };
 /////////////////////////////////////////////////////////////////////////
 
@@ -216,6 +220,11 @@ const measuredPoints = new Array(GRAPH_POINTS_ARR_LEN);
 const addPoint = (x, y) => {
 	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY)] = y * GRAPH_Y_ACCURACY;
 };
+const clearGraph = () => {
+	for (let i = 0; i < GRAPH_POINTS_ARR_LEN; i++) {
+		delete measuredPoints[i];
+	}
+};
 /////////////////////////////////////////////////////////////////////////
 
 // Set ranges for inputs ////////////////////////////////////////////////
@@ -234,6 +243,7 @@ gridInput.setAttribute("max", GRID_MAX);
 let curMaterial;
 let newEProb = 0;
 let glowProb = 0;
+let uFilamentChanged = false;
 
 // radio group
 materialInputs.forEach(node => {
@@ -261,6 +271,7 @@ const handleFilamentInput = () => {
 	cathodeGlowRadius *= avg(window.innerWidth, window.innerHeight) / 678.5;
 	scheduleCathodeRedraw();
 	SPAN_UFILAMENT.innerText = uFilament.toFixed(2) + " V";
+	uFilamentChanged = true;
 };
 
 const handleGridInput = () => {
@@ -271,6 +282,10 @@ const handleGridInput = () => {
 		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
 	SPAN_UGRID.innerText = uGrid.toFixed(2) + " V";
 	SPAN_AMPERAGE.innerText = curAmperage.toFixed(2) + " A";
+	if (uFilamentChanged) {
+		clearGraph();
+		uFilamentChanged = false;
+	}
 };
 
 filamentInput.addEventListener("input", handleFilamentInput);
