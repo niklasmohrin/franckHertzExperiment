@@ -4,3 +4,4 @@ release-builds/
 app/assets/*.png
 .vscode/
 build/
+app/src/*.png
