@@ -110,7 +110,6 @@ let {
 
 // filament
 const FILAMENT_MAX = 10;
-const FILAMENT_MULTIPLIER_MIN = 0.3;
 let uFilament = 0;
 
 // grid
@@ -145,10 +144,7 @@ const f = U => {
 		}
 	}
 	// and return the corresponding amperage
-	return (
-		dataPoints[middle][1] *
-		map(uFilament, 0, FILAMENT_MAX, FILAMENT_MULTIPLIER_MIN, 1)
-	);
+	return dataPoints[middle][1] * map(uFilament, 0, FILAMENT_MAX, 0, 1);
 };
 /////////////////////////////////////////////////////////////////////////
 
