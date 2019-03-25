@@ -122,29 +122,31 @@ const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const ELECTRON_ACC_MIN = 0;
 const ELECTRON_ACC_MAX = 0.04;
+const ELECTRON_HIT_SPEED_DECLINE = 1 / 35;
+const ELECTRON_SPEED_ERROR = 0.3;
+const ranSpeedError = () =>
+	1 + Math.random() * 2 * ELECTRON_SPEED_ERROR - ELECTRON_SPEED_ERROR;
 
 const AMPERAGE_MAX = 500;
 let curAmperage = 0;
 
 // mapping of grid voltage to amperage
 // the data is read from images and saved in the json format
-const dataPoints = require("../src/pointData.json");
-dataPoints.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));
 const f = U => {
 	// find the closest voltage in the sorted data set with binary search
 	let start = 0;
-	let stop = dataPoints.length - 1;
+	let stop = HG_DATA.length - 1;
 	let middle = Math.floor((start + stop) / 2);
-	while (dataPoints[middle][0] !== U && start < stop) {
+	while (HG_DATA[middle][0] !== U && start < stop) {
 		middle = Math.floor((start + stop) / 2);
-		if (U < dataPoints[middle][0]) {
+		if (U < HG_DATA[middle][0]) {
 			stop = middle - 1;
 		} else {
 			start = middle + 1;
 		}
 	}
 	// and return the corresponding amperage
-	return dataPoints[middle][1] * map(uFilament, 0, FILAMENT_MAX, 0, 1);
+	return HG_DATA[middle][1] * map(uFilament, 0, FILAMENT_MAX, 0, 1);
 };
 /////////////////////////////////////////////////////////////////////////
 
@@ -152,8 +154,8 @@ const f = U => {
 
 // electrons
 const ELECTRON_RADIUS = 2; //px
-const MAX_ELECTRONS = 180;
-const MIN_ELECTRONS = 10; // if filament voltage is applied
+const MAX_ELECTRONS = 500;
+const MIN_ELECTRONS = 100; // if filament voltage is applied
 let curMaxElectrons = 0;
 let electrons = [];
 
@@ -246,8 +248,8 @@ materialInputs[0].dispatchEvent(new Event("input"));
 // sliders
 const handleFilamentInput = () => {
 	uFilament = Number(filamentInput.value);
-	newEProb = uFilament / 20;
-	glowProb = uFilament * 0.5e-2;
+	newEProb = uFilament / 40;
+	glowProb = uFilament * 0.25e-2;
 	// adjust cathode glow radius based on uFilament
 	cathodeGlowRadius = map(
 		uFilament,
@@ -268,9 +270,17 @@ const handleGridInput = () => {
 	curAmperage = f(uGrid);
 	addPoint(uGrid, curAmperage);
 	curMaxElectrons =
-		uGrid === 0 ? 0 : map(uGrid, 0, GRID_MAX, MIN_ELECTRONS, MAX_ELECTRONS);
+		uGrid * uFilament === 0
+			? 0
+			: map(
+					uGrid * uFilament,
+					0,
+					GRID_MAX * AMPERAGE_MAX,
+					MIN_ELECTRONS,
+					MAX_ELECTRONS
+			  );
 	SPAN_UGRID.innerText = uGrid.toFixed(2) + " V";
-	SPAN_AMPERAGE.innerText = curAmperage.toFixed(2) + " A";
+	SPAN_AMPERAGE.innerText = curAmperage.toFixed(2) + " nA";
 	if (uFilamentChanged) {
 		clearGraph();
 		uFilamentChanged = false;

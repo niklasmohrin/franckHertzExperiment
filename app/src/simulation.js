@@ -1,4 +1,5 @@
 // simulation.js
+let glowAreas = [];
 
 const simulation = () => {
 	// adds an electron sometimes
@@ -15,7 +16,7 @@ const simulation = () => {
 
 		// accelerate if not behind grid
 		if (e.x < gridX) {
-			e.accelerate(curAcc, 0);
+			e.accelerate(curAcc * ranSpeedError(), 0);
 		}
 		// always update
 		e.update();
@@ -25,7 +26,8 @@ const simulation = () => {
 			e.x > eRightBound ||
 			e.x < eLeftBound ||
 			e.y > eBottomBound ||
-			e.y < eTopBound
+			e.y < eTopBound ||
+			(e.x <= gridX && e.isInArea(glowAreas))
 		) {
 			electrons.splice(i, 1);
 		}
@@ -34,8 +36,10 @@ const simulation = () => {
 	// calculate glow areas and add glow points
 	// starting at first area
 	let curArea = GLOW_OFFSET[curMaterial] + GLOW_DISTANCE[curMaterial];
+	glowAreas = [];
 	// glow energy cannot surpass grid voltage
 	while (curArea < uGrid) {
+		glowAreas.push(curArea);
 		// random number of effects, between MIN_GLOWS and MAX_GLOWS
 		for (let i = 0; i < rand(MIN_GLOWS, MAX_GLOWS); i++) {
 			if (Math.random() < glowProb) {

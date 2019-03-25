@@ -27,3 +27,12 @@ ParticleElectron.prototype.accelerate = function(_ax, _ay) {
 	this.ax += _ax;
 	this.ay += _ay;
 };
+
+ParticleElectron.prototype.isInArea = function(areas) {
+	const energy = map(this.x, eSpawnStartX, gridX, 0, uGrid);
+	if (energy % 4.9 > 4.7 && energy % 4.9 < 5.1) {
+		this.vx -= 4.9 * ELECTRON_HIT_SPEED_DECLINE;
+		return true && !rand(0, 7);
+	}
+	return false;
+};

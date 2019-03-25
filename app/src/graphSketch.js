@@ -102,7 +102,7 @@ const graphSketch = p => {
 			}
 
 			p.text(
-				"I in mA",
+				"I in nA",
 				x - GRAPH_AXIS_LINE_HEIGHT - textFontSize * 0.7,
 				p.height * GRAPH_PADDING_HEIGHT * 0.7
 			);
