@@ -10,6 +10,8 @@ class ParticleElectron {
 
 		this.ax = _ax || 0;
 		this.ay = _ay || 0;
+
+		this.timesHit = 0;
 	}
 }
 
@@ -21,18 +23,28 @@ ParticleElectron.prototype.update = function() {
 
 	this.x += this.vx;
 	this.y += this.vy;
+
+	if (this.x <= gridX) {
+		const energy =
+			map(this.x, eSpawnStartX, gridX, 0, uGrid) -
+			GLOW_DISTANCE[curMaterial] * this.timesHit;
+		if (
+			abs((energy % GLOW_DISTANCE[curMaterial]) - GLOW_DISTANCE[curMaterial]) <
+			0.2
+		) {
+			scheduleGlow(this.x, this.y);
+			this.vx -= GLOW_DISTANCE[curMaterial] * ELECTRON_HIT_SPEED_DECLINE;
+			this.timesHit++;
+		}
+	} else {
+		this.vx -= ELECTRON_CONSTANT_SPEED_DECLINE * ranSpeedError();
+		if (this.vx <= 0) {
+			this.x = eRightBound + 1000;
+		}
+	}
 };
 
 ParticleElectron.prototype.accelerate = function(_ax, _ay) {
 	this.ax += _ax;
 	this.ay += _ay;
-};
-
-ParticleElectron.prototype.isInArea = function(areas) {
-	const energy = map(this.x, eSpawnStartX, gridX, 0, uGrid);
-	if (energy % 4.9 > 4.7 && energy % 4.9 < 5.1) {
-		this.vx -= 4.9 * ELECTRON_HIT_SPEED_DECLINE;
-		return true && !rand(0, 7);
-	}
-	return false;
 };

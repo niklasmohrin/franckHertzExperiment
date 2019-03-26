@@ -178,3 +178,7 @@ const tubeSketch = function(p) {
 
 const tubeP5 = new p5(tubeSketch, "#tube-canvas-container");
 const scheduleCathodeRedraw = debounce(() => (tubeP5.cathodeDrawn = false), 5);
+
+function scheduleGlow(x, y) {
+	tubeP5.glow(x, y);
+}

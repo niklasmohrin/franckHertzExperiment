@@ -122,8 +122,9 @@ const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const ELECTRON_ACC_MIN = 0;
 const ELECTRON_ACC_MAX = 0.04;
-const ELECTRON_HIT_SPEED_DECLINE = 1 / 35;
-const ELECTRON_SPEED_ERROR = 0.3;
+const ELECTRON_HIT_SPEED_DECLINE = 1 / 3;
+const ELECTRON_CONSTANT_SPEED_DECLINE = 1 / 50;
+const ELECTRON_SPEED_ERROR = 1;
 const ranSpeedError = () =>
 	1 + Math.random() * 2 * ELECTRON_SPEED_ERROR - ELECTRON_SPEED_ERROR;
 
@@ -131,22 +132,24 @@ const AMPERAGE_MAX = 500;
 let curAmperage = 0;
 
 // mapping of grid voltage to amperage
-// the data is read from images and saved in the json format
+// the data is read from images and saved as a js obj in pointData.js
 const f = U => {
 	// find the closest voltage in the sorted data set with binary search
 	let start = 0;
-	let stop = HG_DATA.length - 1;
+	let stop = POINT_DATA[curMaterial].length - 1;
 	let middle = Math.floor((start + stop) / 2);
-	while (HG_DATA[middle][0] !== U && start < stop) {
+	while (POINT_DATA[curMaterial][middle][0] !== U && start < stop) {
 		middle = Math.floor((start + stop) / 2);
-		if (U < HG_DATA[middle][0]) {
+		if (U < POINT_DATA[curMaterial][middle][0]) {
 			stop = middle - 1;
 		} else {
 			start = middle + 1;
 		}
 	}
 	// and return the corresponding amperage
-	return HG_DATA[middle][1] * map(uFilament, 0, FILAMENT_MAX, 0, 1);
+	return (
+		POINT_DATA[curMaterial][middle][1] * map(uFilament, 0, FILAMENT_MAX, 0, 1)
+	);
 };
 /////////////////////////////////////////////////////////////////////////
 
@@ -181,6 +184,19 @@ const GLOW_RADIUS = 10;
 const GLOW_FADE = 10;
 const MIN_GLOWS = 2;
 const MAX_GLOWS = 10;
+let glowAreas = [];
+
+const recalculateGlowAreas = () => {
+	// calculate glow areas
+	// starting at first area
+	let curArea = GLOW_OFFSET[curMaterial] + GLOW_DISTANCE[curMaterial];
+	glowAreas = [];
+	// glow energy cannot surpass grid voltage
+	while (curArea < uGrid) {
+		glowAreas.push(curArea);
+		curArea += GLOW_DISTANCE[curMaterial];
+	}
+};
 
 // text constants
 const TEXT_FONT_FAMILY = "ARIAL";
@@ -240,6 +256,7 @@ let resizing = false;
 materialInputs.forEach(node => {
 	node.addEventListener("input", () => {
 		curMaterial = node.value;
+		recalculateGlowAreas();
 	});
 });
 // initial trigger
@@ -285,6 +302,7 @@ const handleGridInput = () => {
 		clearGraph();
 		uFilamentChanged = false;
 	}
+	recalculateGlowAreas();
 };
 
 filamentInput.addEventListener("input", handleFilamentInput);

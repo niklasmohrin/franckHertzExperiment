@@ -33,7 +33,7 @@ print("Scaling: Maximum Voltage is {} and maximum Amperage is {}".format(voltage
 print("Data will be saved to {}".format(outFilename))
 if input("Is that correct? ") != "y":
 	print("Script shutting down")
-	exit("Arguments: [filename, [maxVoltage, maxAmperage]]")
+	exit("Arguments: [inFilename, [maxVoltage, maxAmperage, [outFilename]]]")
 
 img = Image.open(imgFileName)
 data = img.getdata()
@@ -61,6 +61,32 @@ print("Saving {} datapoints to {}".format(len(foundCoords), outFilename))
 
 import json
 
+materials = []
+lines = []
+
+with open(outFilename, "r+") as f:
+	lines = f.readlines()
+	firstLine = lines[0]
+	materials = firstLine.split()[1:]
+	secondLine = lines[1]
+	assert secondLine == "const POINT_DATA = {};\n"
+
+materialName = input("What material is this? ")
+while not materialName.isalnum():
+	materialName = input("What material is this? ")
+
+if materialName in materials:
+	raise Exception("This material is already in there somewhere. Fix your file.")
+
+materials.insert(0, materialName)
+obj = json.dumps(foundCoords)
+
+lines[0] = "// " + " ".join(materials)
+lines.append("\nPOINT_DATA.{} = {};".format(materialName, obj))
+lines.append("\nPOINT_DATA.{}.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));".format(materialName))
+
+
 with open(outFilename,"w") as f:
-	json.dump(foundCoords, f)
+	f.writelines(lines)
+	
 

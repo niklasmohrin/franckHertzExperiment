@@ -1,4 +1,8 @@
-const HG_DATA = [
+// mercury neon
+const POINT_DATA = {};
+// first line is list of materials
+
+POINT_DATA.mercury = [
 	[0, 0],
 	[0.013102725366876311, 5.681818181818187],
 	[0.013102725366876311, 6.198347107437996],
@@ -13232,4 +13236,7 @@ const HG_DATA = [
 	[24.96069182389937, 333.1611570247934],
 	[24.96069182389937, 333.6776859504132]
 ];
-HG_DATA.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));
+POINT_DATA.mercury.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));
+
+POINT_DATA.neon = [[0, 0]];
+POINT_DATA.neon.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));
