@@ -34,6 +34,9 @@ ParticleElectron.prototype.update = function() {
 		) {
 			scheduleGlow(this.x, this.y);
 			this.vx -= GLOW_DISTANCE[curMaterial] * ELECTRON_HIT_SPEED_DECLINE;
+			if (this.vx < ELECTRON_MAX_BACKWARDS_SPEED) {
+				this.vx = ELECTRON_MAX_BACKWARDS_SPEED;
+			}
 			this.timesHit++;
 		}
 	} else {

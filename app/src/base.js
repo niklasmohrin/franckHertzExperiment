@@ -78,7 +78,7 @@ const ORIG_DATA = {
 	eRightBound: 1670,
 	eTopBound: 84,
 	eBottomBound: 512,
-	gridX: 1380,
+	gridX: 1375,
 	textPositions: {
 		width: 140,
 		height: 58,
@@ -124,9 +124,10 @@ const ELECTRON_ACC_MIN = 0;
 const ELECTRON_ACC_MAX = 0.04;
 const ELECTRON_HIT_SPEED_DECLINE = 1 / 3;
 const ELECTRON_CONSTANT_SPEED_DECLINE = 1 / 50;
-const ELECTRON_SPEED_ERROR = 1;
+const ELECTRON_SPEED_ERROR = 3;
 const ranSpeedError = () =>
 	1 + Math.random() * 2 * ELECTRON_SPEED_ERROR - ELECTRON_SPEED_ERROR;
+const ELECTRON_MAX_BACKWARDS_SPEED = -0.5;
 
 const AMPERAGE_MAX = 500;
 let curAmperage = 0;

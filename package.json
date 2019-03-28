@@ -1,6 +1,6 @@
 {
 	"name": "franckhertz",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "Franck Hertz Versuch in Electron",
 	"main": "./app/src/main.js",
 	"scripts": {
@@ -18,12 +18,12 @@
 	},
 	"build": {
 		"appId": "com.niklasmohrin.franckHertz",
-		"copyright": "Copyright © 2019 Niklas-Mohrin",
+		"copyright": "Copyright © 2019 Niklas Mohrin",
 		"productName": "Franck Hertz Versuch",
 		"electronVersion": "4.0.4",
 		"win": {
 			"target": [
-				"nsis"
+				"portable"
 			]
 		}
 	}
