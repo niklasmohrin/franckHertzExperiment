@@ -18,4 +18,5 @@ window.onload = () => {
 	handleFilamentInput();
 	handleGridInput();
 	repositionSpans();
+	SPAN_UCOUNTER.innerText = COUNTER_VOLTAGE.toFixed(2) + " V";
 };

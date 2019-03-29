@@ -29,8 +29,10 @@ ParticleElectron.prototype.update = function() {
 			map(this.x, eSpawnStartX, gridX, 0, uGrid) -
 			GLOW_DISTANCE[curMaterial] * this.timesHit;
 		if (
-			abs((energy % GLOW_DISTANCE[curMaterial]) - GLOW_DISTANCE[curMaterial]) <
-			0.2
+			abs(
+				((energy - 0.2) % GLOW_DISTANCE[curMaterial]) -
+					GLOW_DISTANCE[curMaterial]
+			) < 0.2
 		) {
 			scheduleGlow(this.x, this.y);
 			this.vx -= GLOW_DISTANCE[curMaterial] * ELECTRON_HIT_SPEED_DECLINE;
@@ -40,7 +42,6 @@ ParticleElectron.prototype.update = function() {
 			this.timesHit++;
 		}
 	} else {
-		this.vx -= ELECTRON_CONSTANT_SPEED_DECLINE * ranSpeedError();
 		if (this.vx <= 0) {
 			this.x = eRightBound + 1000;
 		}

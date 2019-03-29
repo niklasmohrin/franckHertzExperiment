@@ -16,6 +16,8 @@ const simulation = () => {
 		// accelerate if not behind grid
 		if (e.x < gridX) {
 			e.accelerate(curAcc * ranSpeedError(), 0);
+		} else {
+			e.accelerate(COUNTER_FORCE * ranSpeedError(), 0);
 		}
 		// always update
 		e.update();

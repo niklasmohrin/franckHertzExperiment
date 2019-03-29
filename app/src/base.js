@@ -86,7 +86,8 @@ const ORIG_DATA = {
 		yMax: 624,
 		uFilamentX: 235,
 		uGridX: 890,
-		amperageX: 1750
+		amperageX: 1750,
+		uCounterX: 1550
 	},
 	textFontSize: 40
 };
@@ -112,22 +113,25 @@ let {
 const FILAMENT_MAX = 10;
 let uFilament = 0;
 
-// grid
-const GRID_LENGTH = 1;
-const GRID_MAX = 25;
-let uGrid = 0;
-
 // electron
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const ELECTRON_ACC_MIN = 0;
-const ELECTRON_ACC_MAX = 0.04;
+const ELECTRON_ACC_MAX = 0.03;
 const ELECTRON_HIT_SPEED_DECLINE = 1 / 3;
 const ELECTRON_CONSTANT_SPEED_DECLINE = 1 / 50;
 const ELECTRON_SPEED_ERROR = 3;
 const ranSpeedError = () =>
 	1 + Math.random() * 2 * ELECTRON_SPEED_ERROR - ELECTRON_SPEED_ERROR;
 const ELECTRON_MAX_BACKWARDS_SPEED = -0.5;
+
+// grid
+const GRID_LENGTH = 1;
+const GRID_MAX = 25;
+let uGrid = 0;
+
+const COUNTER_VOLTAGE = 1.5;
+const COUNTER_FORCE = -0.01;
 
 const AMPERAGE_MAX = 500;
 let curAmperage = 0;
@@ -241,6 +245,7 @@ const gridInput = document.getElementById("grid");
 const SPAN_UFILAMENT = document.getElementById("uFilament-text-span");
 const SPAN_UGRID = document.getElementById("uGrid-text-span");
 const SPAN_AMPERAGE = document.getElementById("amperage-text-span");
+const SPAN_UCOUNTER = document.getElementById("uCounter-text-span");
 
 filamentInput.setAttribute("max", FILAMENT_MAX);
 gridInput.setAttribute("max", GRID_MAX);
@@ -309,14 +314,6 @@ const handleGridInput = () => {
 filamentInput.addEventListener("input", handleFilamentInput);
 gridInput.addEventListener("input", handleGridInput);
 
-// temporary grid slider change
-
-// FIXME: remove this
-// let gridInterval = setInterval(() => {
-// 	uGrid += 0.01;
-// 	uGrid %= GRID_MAX;
-// 	handleGridInput();
-// }, 2);
 ///////////////////////////////////////////////
 
 ////////////////////////////////////////////////////
@@ -353,7 +350,8 @@ const recalculateBoundaries = (w, h) => {
 		yMax: ORIG_DATA.textPositions.yMax * hFactor,
 		uFilamentX: ORIG_DATA.textPositions.uFilamentX * wFactor,
 		uGridX: ORIG_DATA.textPositions.uGridX * wFactor,
-		amperageX: ORIG_DATA.textPositions.amperageX * wFactor
+		amperageX: ORIG_DATA.textPositions.amperageX * wFactor,
+		uCounterX: ORIG_DATA.textPositions.uCounterX * wFactor
 	};
 
 	textFontSize = ORIG_DATA.textFontSize * avg(wFactor, hFactor);
@@ -366,15 +364,16 @@ const repositionSpans = () => {
 		(textPositions.uGridX - textPositions.width / 2).toString() + "px";
 	SPAN_AMPERAGE.style.left =
 		(textPositions.amperageX - textPositions.width / 2).toString() + "px";
-	SPAN_UFILAMENT.style.top = SPAN_UGRID.style.top = SPAN_AMPERAGE.style.top =
+	SPAN_UCOUNTER.style.left =
+		(textPositions.uCounterX - textPositions.width / 2).toString() + "px";
+	SPAN_UFILAMENT.style.top = SPAN_UGRID.style.top = SPAN_AMPERAGE.style.top = SPAN_UCOUNTER.style.top =
 		textPositions.yMin.toString() + "px";
-	SPAN_UFILAMENT.style.width = SPAN_UGRID.style.width =
-		SPAN_AMPERAGE.style.width;
-	textPositions.width.toString() + "px";
-	SPAN_UFILAMENT.style.height = SPAN_UGRID.style.height = SPAN_AMPERAGE.style.height =
+	SPAN_UFILAMENT.style.width = SPAN_UGRID.style.width = SPAN_AMPERAGE.style.width = SPAN_UCOUNTER.style.width =
+		textPositions.width.toString() + "px";
+	SPAN_UFILAMENT.style.height = SPAN_UGRID.style.height = SPAN_AMPERAGE.style.height = SPAN_UCOUNTER.style.height =
 		textPositions.height.toString() + "px";
 
-	SPAN_UFILAMENT.style.fontSize = SPAN_UGRID.style.fontSize = SPAN_AMPERAGE.style.fontSize =
+	SPAN_UFILAMENT.style.fontSize = SPAN_UGRID.style.fontSize = SPAN_AMPERAGE.style.fontSize = SPAN_UCOUNTER.style.fontSize =
 		textFontSize.toString() + "px";
 };
 /////////////////////////////////////////////////////////////////////////
