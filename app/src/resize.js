@@ -1,3 +1,5 @@
+// resize.js
+
 // only exectutes 250ms after last event
 window.addEventListener(
 	"resize",

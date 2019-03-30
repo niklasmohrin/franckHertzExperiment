@@ -26,7 +26,8 @@ else:
 	outFilename = "pointData.json"
 
 # lineColor = (19,21,22,255)
-lineColor = (255, 4, 0)
+# lineColor = (255, 4, 0)
+lineColor = (0,0,0,255)
 
 print("Reading points with color {} from {}".format(lineColor, imgFileName))
 print("Scaling: Maximum Voltage is {} and maximum Amperage is {}".format(voltageMax, amperageMax))
@@ -48,7 +49,7 @@ def getXY(index):
 foundPoints = []
 
 for i,t in enumerate(data):
-	if t[:3] == lineColor:
+	if t == lineColor:
 		coords = getXY(i)
 		foundPoints.append(coords)
 
@@ -81,7 +82,7 @@ if materialName in materials:
 materials.insert(0, materialName)
 obj = json.dumps(foundCoords)
 
-lines[0] = "// " + " ".join(materials)
+lines[0] = "// " + " ".join(materials) + "\n"
 lines.append("\nPOINT_DATA.{} = {};".format(materialName, obj))
 lines.append("\nPOINT_DATA.{}.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));".format(materialName))
 

@@ -30,9 +30,9 @@ ParticleElectron.prototype.update = function() {
 			GLOW_DISTANCE[curMaterial] * this.timesHit;
 		if (
 			abs(
-				((energy - 0.2) % GLOW_DISTANCE[curMaterial]) -
+				((energy - 0.3) % GLOW_DISTANCE[curMaterial]) -
 					GLOW_DISTANCE[curMaterial]
-			) < 0.2
+			) < 0.25
 		) {
 			scheduleGlow(this.x, this.y);
 			this.vx -= GLOW_DISTANCE[curMaterial] * ELECTRON_HIT_SPEED_DECLINE;
