@@ -80,7 +80,7 @@ const ORIG_DATA = {
 	eBottomBound: 512,
 	gridX: 1375,
 	textPositions: {
-		width: 140,
+		width: 200,
 		height: 58,
 		yMin: 566,
 		yMax: 624,
@@ -162,7 +162,7 @@ const f = U => {
 
 // electrons
 const ELECTRON_RADIUS = 2; //px
-const MAX_ELECTRONS = 500;
+const MAX_ELECTRONS = 1000;
 const MIN_ELECTRONS = 100; // if filament voltage is applied
 let curMaxElectrons = 0;
 let electrons = [];
@@ -181,8 +181,8 @@ const CATHODE_CENTER_WIDTH = 0.05;
 const CATHODE_CENTER_HEIGHT = 0.12;
 
 // material glow constants
-const GLOW_OFFSET = { mercury: 0.4, neon: 0 };
-const GLOW_DISTANCE = { mercury: 4.9, neon: 18.7 };
+const GLOW_OFFSET = { mercury: 0.2, neon: 0 };
+const GLOW_DISTANCE = { mercury: 4.9, neon: 2 };
 const GLOW_ERROR = 0.3;
 const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
 const GLOW_RADIUS = 10;
@@ -263,6 +263,7 @@ materialInputs.forEach(node => {
 	node.addEventListener("input", () => {
 		curMaterial = node.value;
 		recalculateGlowAreas();
+		clearGraph();
 	});
 });
 // initial trigger

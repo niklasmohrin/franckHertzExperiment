@@ -168,6 +168,7 @@ const graphSketch = p => {
 		p.graphCnv.parent(p.parent);
 		p.graphCnv.id("graph-canvas");
 		p.pixelDensity(1);
+		p.graphCnv.mousePressed(clearGraph);
 
 		p.drawDiagram();
 
