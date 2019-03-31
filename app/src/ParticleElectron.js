@@ -1,16 +1,10 @@
 // ParticleElectron.js
 
 class ParticleElectron {
-	constructor(_x, _y, _vx, _vy, _ax, _ay) {
+	constructor(_x, _y) {
 		this.x = _x || Math.floor(Math.random() * eSpawnWidth) + eSpawnStartX;
 		this.y = _y || Math.floor(Math.random() * eSpawnHeight) + eSpawnStartY;
-
-		this.vx = _vx || 0;
-		this.vy = _vy || 0;
-
-		this.ax = _ax || 0;
-		this.ay = _ay || 0;
-
+		this.vx = this.vy = this.ax = this.ay = 0;
 		this.timesHit = 0;
 	}
 }
@@ -18,13 +12,12 @@ class ParticleElectron {
 ParticleElectron.prototype.update = function() {
 	this.vx += this.ax;
 	this.vy += this.ay;
-
 	this.ax = this.ay = 0;
-
 	this.x += this.vx;
 	this.y += this.vy;
 
 	if (this.x <= gridX) {
+		// current energy based on position in the tube
 		const energy =
 			map(this.x, eSpawnStartX, gridX, 0, uGrid) -
 			GLOW_DISTANCE[curMaterial] * this.timesHit;
@@ -42,6 +35,7 @@ ParticleElectron.prototype.update = function() {
 			this.timesHit++;
 		}
 	} else {
+		// if behind grid and negative velocity, go out of bounds and delete in simulation.js
 		if (this.vx <= 0) {
 			this.x = eRightBound + 1000;
 		}

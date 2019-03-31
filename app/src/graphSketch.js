@@ -91,7 +91,11 @@ const graphSketch = p => {
 		// labeling the y axis
 		{
 			const x = p.width * GRAPH_PADDING_WIDTH - GRAPH_SW;
-			for (let i = 0; i < AMPERAGE_MAX[curMaterial]; i += GRAPH_Y_AXIS_STEP[curMaterial]) {
+			for (
+				let i = 0;
+				i < AMPERAGE_MAX[curMaterial];
+				i += GRAPH_Y_AXIS_STEP[curMaterial]
+			) {
 				let y = map(
 					i,
 					0,
@@ -123,7 +127,7 @@ const graphSketch = p => {
 			p.width - GRAPH_PADDING_WIDTH * p.width
 		);
 		const y = map(
-			measuredPoints[_x] / GRAPH_Y_ACCURACY,
+			measuredPoints[_x],
 			0,
 			AMPERAGE_MAX[curMaterial],
 			p.height - GRAPH_PADDING_HEIGHT * p.height,
@@ -136,7 +140,11 @@ const graphSketch = p => {
 	// draw the actual curve
 	p.drawGraph = () => {
 		p.beginShape();
-		for (let _x = 0; _x < GRAPH_POINTS_ARR_LEN; _x++) {
+		for (
+			let _x = 0;
+			_x < GRID_MAX[curMaterial] * GRAPH_X_ACCURACY[curMaterial];
+			_x++
+		) {
 			const [x, y] = p.mapToCnv(_x);
 			p.vertex(x, y);
 		}
@@ -179,7 +187,6 @@ const graphSketch = p => {
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
 
-		// p.recalcPoints();
 		p.drawGraph();
 
 		p.prevWidth = p.parent.clientWidth;

@@ -5,7 +5,6 @@ const simulation = () => {
 	if (electrons.length < curMaxElectrons && Math.random() < newEProb) {
 		electrons.push(new ParticleElectron());
 	}
-
 	// simplified, just for demonstration
 	const curAcc = map(
 		uGrid,
@@ -14,7 +13,6 @@ const simulation = () => {
 		ELECTRON_ACC_MIN,
 		ELECTRON_ACC_MAX
 	);
-
 	// update all electrons
 	for (let i = electrons.length - 1; i > -1; i--) {
 		const e = electrons[i];

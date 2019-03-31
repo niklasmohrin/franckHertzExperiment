@@ -109,26 +109,24 @@ let {
 	textFontSize
 } = ORIG_DATA;
 
-// filament
-const FILAMENT_MAX = 10;
-let uFilament = 0;
-
 // electron
 const ELECTRON_MASS = 9e-31;
 const ELECTRON_CHARGE = 1.6e-19;
 const ELECTRON_ACC_MIN = 0;
 const ELECTRON_ACC_MAX = 0.03;
 const ELECTRON_HIT_SPEED_DECLINE = 1 / 3;
-const ELECTRON_CONSTANT_SPEED_DECLINE = 1 / 50;
 const ELECTRON_SPEED_ERROR = 3;
 const ranSpeedError = () =>
 	1 + Math.random() * 2 * ELECTRON_SPEED_ERROR - ELECTRON_SPEED_ERROR;
 const ELECTRON_MAX_BACKWARDS_SPEED = -0.5;
 
 // grid
-const GRID_LENGTH = 1;
 const GRID_MAX = { mercury: 25, neon: 10 };
 let uGrid = 0;
+
+// filament
+const FILAMENT_MAX = 10;
+let uFilament = 0;
 
 const COUNTER_VOLTAGE = 1.5;
 const COUNTER_FORCE = -0.01;
@@ -163,7 +161,7 @@ const f = U => {
 // electrons
 const ELECTRON_RADIUS = 2; //px
 const MAX_ELECTRONS = 1000;
-const MIN_ELECTRONS = 100; // if filament voltage is applied
+const MIN_ELECTRONS = 100; // when filament voltage is applied
 let curMaxElectrons = 0;
 let electrons = [];
 
@@ -187,8 +185,6 @@ const GLOW_ERROR = 0.3;
 const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
 const GLOW_RADIUS = 10;
 const GLOW_FADE = 10;
-const MIN_GLOWS = 2;
-const MAX_GLOWS = 10;
 let glowAreas = [];
 
 const recalculateGlowAreas = () => {
@@ -203,10 +199,6 @@ const recalculateGlowAreas = () => {
 	}
 };
 
-// text constants
-const TEXT_FONT_FAMILY = "ARIAL";
-const TEXT_FONT_STROKE = 1;
-
 // Graph constants
 const GRAPH_STROKE = "blue";
 const GRAPH_SW = 2;
@@ -220,17 +212,14 @@ const GRAPH_AXIS_LINE_HEIGHT = 2;
 const GRAPH_AXIS_LINE_SW = 1.5;
 const GRAPH_AXIS_FONT_SIZE = 10;
 const GRAPH_ARROWTIP_LENGTH = 10;
-const GRAPH_MAX_X_DIFF = 3;
 const GRAPH_CUR_POINT_COLOR = "#9a4aef";
 const GRAPH_CUR_POINT_SW = 4;
 const GRAPH_FRAMERATE = 30;
 const GRAPH_X_ACCURACY = { mercury: 300, neon: 500 };
-const GRAPH_Y_ACCURACY = 300;
 const GRAPH_POINTS_ARR_LEN = GRID_MAX.mercury * GRAPH_X_ACCURACY.mercury;
 const measuredPoints = new Array(GRAPH_POINTS_ARR_LEN);
 const addPoint = (x, y) => {
-	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY[curMaterial])] =
-		y * GRAPH_Y_ACCURACY;
+	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY[curMaterial])] = y;
 };
 const clearGraph = () => {
 	for (let i = 0; i < GRAPH_POINTS_ARR_LEN; i++) {
@@ -254,7 +243,6 @@ filamentInput.setAttribute("max", FILAMENT_MAX);
 // handle inputs ////////////////////////////////////////////////////////
 let curMaterial;
 let newEProb = 0;
-let glowProb = 0;
 let uFilamentChanged = false;
 let resizing = false;
 
@@ -262,7 +250,6 @@ let resizing = false;
 const handleFilamentInput = () => {
 	uFilament = Number(filamentInput.value);
 	newEProb = uFilament / 40;
-	glowProb = uFilament * 0.25e-2;
 	// adjust cathode glow radius based on uFilament
 	cathodeGlowRadius = map(
 		uFilament,
@@ -371,7 +358,6 @@ const repositionSpans = () => {
 		textPositions.width.toString() + "px";
 	SPAN_UFILAMENT.style.height = SPAN_UGRID.style.height = SPAN_AMPERAGE.style.height = SPAN_UCOUNTER.style.height =
 		textPositions.height.toString() + "px";
-
 	SPAN_UFILAMENT.style.fontSize = SPAN_UGRID.style.fontSize = SPAN_AMPERAGE.style.fontSize = SPAN_UCOUNTER.style.fontSize =
 		textFontSize.toString() + "px";
 };

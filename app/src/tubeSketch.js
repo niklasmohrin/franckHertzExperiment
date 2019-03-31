@@ -10,7 +10,6 @@ const tubeSketch = function(p) {
 		p.stroke(ELECTRON_COLOR);
 		p.strokeWeight(ELECTRON_RADIUS);
 		p.fill(ELECTRON_COLOR);
-
 		for (let e of electrons) {
 			if (
 				e.x < eRightBound &&
@@ -26,7 +25,6 @@ const tubeSketch = function(p) {
 	p.drawGlows = () => {
 		p.noStroke();
 		const c = p.color(GLOW_COLOR[curMaterial]);
-
 		for (let i = p.glows.length - 1; i > -1; i--) {
 			p.glows[i].a -= GLOW_FADE;
 			const glow = p.glows[i];
