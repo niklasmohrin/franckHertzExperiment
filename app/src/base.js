@@ -151,7 +151,7 @@ const f = U => {
 	}
 	// and return the corresponding amperage
 	return (
-		POINT_DATA[curMaterial][middle][1] * map(uFilament, 0, FILAMENT_MAX, 0, 1)
+		POINT_DATA[curMaterial][start][1] * map(uFilament, 0, FILAMENT_MAX, 0, 1)
 	);
 };
 /////////////////////////////////////////////////////////////////////////
@@ -206,8 +206,10 @@ const GRAPH_AXIS_STROKE = "white";
 const GRAPH_AXIS_SW = 2.5;
 const GRAPH_PADDING_HEIGHT = 0.15;
 const GRAPH_PADDING_WIDTH = 0.1;
-const GRAPH_X_AXIS_STEP = { mercury: 5, neon: 2.5 };
-const GRAPH_Y_AXIS_STEP = { mercury: 100, neon: 50 };
+const GRAPH_X_AXIS_STEP = { mercury: 2.5, neon: 1.25 };
+const GRAPH_Y_AXIS_STEP = { mercury: 50, neon: 25 };
+const GRAPH_X_AXIS_LABEL_STEP = { mercury: 5, neon: 2.5 };
+const GRAPH_Y_AXIS_LABEL_STEP = { mercury: 100, neon: 50 };
 const GRAPH_AXIS_LINE_HEIGHT = 2;
 const GRAPH_AXIS_LINE_SW = 1.5;
 const GRAPH_AXIS_FONT_SIZE = 10;

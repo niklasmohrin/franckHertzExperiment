@@ -78,7 +78,8 @@ const graphSketch = p => {
 				if (i > 0)
 					p.line(x, y - GRAPH_AXIS_LINE_HEIGHT, x, y + GRAPH_AXIS_LINE_HEIGHT);
 
-				p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + textFontSize * 0.7);
+				if (i % GRAPH_X_AXIS_LABEL_STEP[curMaterial] === 0)
+					p.text(i, x, y + GRAPH_AXIS_LINE_HEIGHT + textFontSize * 0.7);
 			}
 
 			p.text(
@@ -106,7 +107,8 @@ const graphSketch = p => {
 				if (i > 0)
 					p.line(x - GRAPH_AXIS_LINE_HEIGHT, y, x + GRAPH_AXIS_LINE_HEIGHT, y);
 
-				p.text(i, x - GRAPH_AXIS_LINE_HEIGHT - textFontSize * 0.7, y);
+				if (i % GRAPH_Y_AXIS_LABEL_STEP[curMaterial] === 0)
+					p.text(i, x - GRAPH_AXIS_LINE_HEIGHT - textFontSize * 0.7, y);
 			}
 
 			p.text(
