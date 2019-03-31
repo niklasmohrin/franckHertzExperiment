@@ -1,6 +1,6 @@
 {
 	"name": "franckhertz",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Franck Hertz Versuch in Electron",
 	"main": "./app/src/main.js",
 	"scripts": {
@@ -11,7 +11,6 @@
 		"dist": "build -w --x64 --ia32"
 	},
 	"author": "Niklas Mohrin",
-	"license": "ISC",
 	"devDependencies": {
 		"electron": "^4.0.4",
 		"electron-builder": "^20.38.5"
@@ -25,6 +24,9 @@
 			"target": [
 				"portable"
 			]
-		}
+		},
+		"files": [
+			"app/**/*"
+		]
 	}
 }
