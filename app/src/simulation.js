@@ -7,7 +7,13 @@ const simulation = () => {
 	}
 
 	// simplified, just for demonstration
-	const curAcc = map(uGrid, 0, GRID_MAX, ELECTRON_ACC_MIN, ELECTRON_ACC_MAX);
+	const curAcc = map(
+		uGrid,
+		0,
+		GRID_MAX.mercury,
+		ELECTRON_ACC_MIN,
+		ELECTRON_ACC_MAX
+	);
 
 	// update all electrons
 	for (let i = electrons.length - 1; i > -1; i--) {

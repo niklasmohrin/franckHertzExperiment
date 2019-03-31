@@ -127,13 +127,13 @@ const ELECTRON_MAX_BACKWARDS_SPEED = -0.5;
 
 // grid
 const GRID_LENGTH = 1;
-const GRID_MAX = 25;
+const GRID_MAX = { mercury: 25, neon: 10 };
 let uGrid = 0;
 
 const COUNTER_VOLTAGE = 1.5;
 const COUNTER_FORCE = -0.01;
 
-const AMPERAGE_MAX = 500;
+const AMPERAGE_MAX = { mercury: 500, neon: 200 };
 let curAmperage = 0;
 
 // mapping of grid voltage to amperage
@@ -214,8 +214,8 @@ const GRAPH_AXIS_STROKE = "white";
 const GRAPH_AXIS_SW = 2.5;
 const GRAPH_PADDING_HEIGHT = 0.15;
 const GRAPH_PADDING_WIDTH = 0.1;
-const GRAPH_X_AXIS_STEP = 5;
-const GRAPH_Y_AXIS_STEP = 100;
+const GRAPH_X_AXIS_STEP = { mercury: 5, neon: 2.5 };
+const GRAPH_Y_AXIS_STEP = { mercury: 100, neon: 50 };
 const GRAPH_AXIS_LINE_HEIGHT = 2;
 const GRAPH_AXIS_LINE_SW = 1.5;
 const GRAPH_AXIS_FONT_SIZE = 10;
@@ -224,12 +224,13 @@ const GRAPH_MAX_X_DIFF = 3;
 const GRAPH_CUR_POINT_COLOR = "#9a4aef";
 const GRAPH_CUR_POINT_SW = 4;
 const GRAPH_FRAMERATE = 30;
-const GRAPH_X_ACCURACY = 300;
+const GRAPH_X_ACCURACY = { mercury: 300, neon: 500 };
 const GRAPH_Y_ACCURACY = 300;
-const GRAPH_POINTS_ARR_LEN = GRID_MAX * GRAPH_X_ACCURACY;
+const GRAPH_POINTS_ARR_LEN = GRID_MAX.mercury * GRAPH_X_ACCURACY.mercury;
 const measuredPoints = new Array(GRAPH_POINTS_ARR_LEN);
 const addPoint = (x, y) => {
-	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY)] = y * GRAPH_Y_ACCURACY;
+	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY[curMaterial])] =
+		y * GRAPH_Y_ACCURACY;
 };
 const clearGraph = () => {
 	for (let i = 0; i < GRAPH_POINTS_ARR_LEN; i++) {
@@ -248,7 +249,6 @@ const SPAN_AMPERAGE = document.getElementById("amperage-text-span");
 const SPAN_UCOUNTER = document.getElementById("uCounter-text-span");
 
 filamentInput.setAttribute("max", FILAMENT_MAX);
-gridInput.setAttribute("max", GRID_MAX);
 /////////////////////////////////////////////////////////////////////////
 
 // handle inputs ////////////////////////////////////////////////////////
@@ -257,17 +257,6 @@ let newEProb = 0;
 let glowProb = 0;
 let uFilamentChanged = false;
 let resizing = false;
-
-// radio group
-materialInputs.forEach(node => {
-	node.addEventListener("input", () => {
-		curMaterial = node.value;
-		recalculateGlowAreas();
-		clearGraph();
-	});
-});
-// initial trigger
-materialInputs[0].dispatchEvent(new Event("input"));
 
 // sliders
 const handleFilamentInput = () => {
@@ -299,7 +288,7 @@ const handleGridInput = () => {
 			: map(
 					uGrid * uFilament,
 					0,
-					GRID_MAX * AMPERAGE_MAX,
+					GRID_MAX.mercury * AMPERAGE_MAX.mercury,
 					MIN_ELECTRONS,
 					MAX_ELECTRONS
 			  );
@@ -315,10 +304,19 @@ const handleGridInput = () => {
 filamentInput.addEventListener("input", handleFilamentInput);
 gridInput.addEventListener("input", handleGridInput);
 
-///////////////////////////////////////////////
-
-////////////////////////////////////////////////////
-
+// radio group
+materialInputs.forEach(node => {
+	node.addEventListener("input", () => {
+		curMaterial = node.value;
+		recalculateGlowAreas();
+		clearGraph();
+		gridInput.setAttribute("max", GRID_MAX[curMaterial]);
+		gridInput.value = constrain(gridInput.value, 0, GRID_MAX[curMaterial]);
+		handleGridInput();
+	});
+});
+// initial trigger
+materialInputs[0].dispatchEvent(new Event("input"));
 /////////////////////////////////////////////////////////////////////////
 
 // Positioning calculations /////////////////////////////////////////////

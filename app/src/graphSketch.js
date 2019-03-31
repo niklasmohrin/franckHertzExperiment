@@ -63,11 +63,15 @@ const graphSketch = p => {
 		// labeling the x axis
 		{
 			const y = p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW;
-			for (let i = 0; i < GRID_MAX; i += GRAPH_X_AXIS_STEP) {
+			for (
+				let i = 0;
+				i < GRID_MAX[curMaterial];
+				i += GRAPH_X_AXIS_STEP[curMaterial]
+			) {
 				let x = map(
 					i,
 					0,
-					GRID_MAX,
+					GRID_MAX[curMaterial],
 					GRAPH_PADDING_WIDTH * p.width,
 					p.width * (1 - GRAPH_PADDING_WIDTH)
 				);
@@ -87,11 +91,11 @@ const graphSketch = p => {
 		// labeling the y axis
 		{
 			const x = p.width * GRAPH_PADDING_WIDTH - GRAPH_SW;
-			for (let i = 0; i < AMPERAGE_MAX; i += GRAPH_Y_AXIS_STEP) {
+			for (let i = 0; i < AMPERAGE_MAX[curMaterial]; i += GRAPH_Y_AXIS_STEP[curMaterial]) {
 				let y = map(
 					i,
 					0,
-					AMPERAGE_MAX,
+					AMPERAGE_MAX[curMaterial],
 					p.height * (1 - GRAPH_PADDING_HEIGHT) + GRAPH_SW,
 					GRAPH_PADDING_HEIGHT * p.height
 				);
@@ -112,16 +116,16 @@ const graphSketch = p => {
 	// map the voltage to coordinates on the canvas
 	p.mapToCnv = _x => {
 		const x = map(
-			_x / GRAPH_X_ACCURACY,
+			_x / GRAPH_X_ACCURACY[curMaterial],
 			0,
-			GRID_MAX,
+			GRID_MAX[curMaterial],
 			GRAPH_PADDING_WIDTH * p.width,
 			p.width - GRAPH_PADDING_WIDTH * p.width
 		);
 		const y = map(
 			measuredPoints[_x] / GRAPH_Y_ACCURACY,
 			0,
-			AMPERAGE_MAX,
+			AMPERAGE_MAX[curMaterial],
 			p.height - GRAPH_PADDING_HEIGHT * p.height,
 			GRAPH_PADDING_HEIGHT * p.height
 		);
@@ -148,14 +152,14 @@ const graphSketch = p => {
 		const x = map(
 			uGrid,
 			0,
-			GRID_MAX,
+			GRID_MAX[curMaterial],
 			GRAPH_PADDING_WIDTH * graphP5.width,
 			graphP5.width - GRAPH_PADDING_WIDTH * graphP5.width
 		);
 		const y = map(
 			f(uGrid),
 			0,
-			AMPERAGE_MAX,
+			AMPERAGE_MAX[curMaterial],
 			graphP5.height - GRAPH_PADDING_HEIGHT * graphP5.height,
 			GRAPH_PADDING_HEIGHT * graphP5.height
 		);
