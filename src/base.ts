@@ -1,12 +1,33 @@
 // base.js
 
+import { scheduleCathodeRedraw, scheduleGlow } from "./tubeSketch";
+
 // util functions ///////////////////////////////////////////////////////
-const map = (val, xmin, xmax, ymin, ymax) =>
-	((val - xmin) / (xmax - xmin)) * (ymax - ymin) + ymin;
+export function map(
+	val: number,
+	xmin: number,
+	xmax: number,
+	ymin: number,
+	ymax: number
+): number {
+	return ((val - xmin) / (xmax - xmin)) * (ymax - ymin) + ymin;
+}
 
-const rand = (start, end) => Math.floor(Math.random() * (end - start)) + start;
+export function rand(start: number, end: number): number {
+	return Math.floor(Math.random() * (end - start)) + start;
+}
 
-const distanceToRectSquared = (p, rect) => {
+export interface Point {
+	x: number;
+	y: number;
+}
+
+export interface Rectangle {
+	min: Point;
+	max: Point;
+}
+
+export function distanceToRectSquared(p: Point, rect: Rectangle): number {
 	const dx =
 		p.x > rect.min.x && p.x < rect.max.x
 			? 0
@@ -16,13 +37,21 @@ const distanceToRectSquared = (p, rect) => {
 			? 0
 			: Math.max(rect.min.y - p.y, p.y - rect.max.y);
 	return dx * dx + dy * dy;
-};
+}
 
-const distanceToRect = (p, rect) => Math.sqrt(distanceToRectSquared(p, rect));
+export function distanceToRect(p: Point, rect: Rectangle): number {
+	return Math.sqrt(distanceToRectSquared(p, rect));
+}
 
-const constrain = (x, a, b) => (x > b ? b : x < a ? a : x);
+export function constrain(x: number, a: number, b: number): number {
+	return x > b ? b : x < a ? a : x;
+}
 
-const debounce = (func, wait, immediate) => {
+export function debounce(
+	func: Function,
+	wait: number,
+	immediate?: boolean
+): Function {
 	let timeout;
 	return function() {
 		const context = this,
@@ -36,9 +65,9 @@ const debounce = (func, wait, immediate) => {
 		timeout = setTimeout(later, wait);
 		if (callNow) func.apply(context, args);
 	};
-};
+}
 
-const avg = (...args) => {
+export const avg = (...args: any[]) => {
 	if (args.length > 0) {
 		return args.reduce((prev, cur) => (prev += cur)) / args.length;
 	} else {
@@ -46,7 +75,7 @@ const avg = (...args) => {
 	}
 };
 
-const hexToRgb = hex => {
+export const hexToRgb = hex => {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	return result
 		? {
@@ -57,7 +86,7 @@ const hexToRgb = hex => {
 		: null;
 };
 
-const abs = x => (x < 0 ? -x : x);
+export const abs = x => (x < 0 ? -x : x);
 /////////////////////////////////////////////////////////////////////////
 
 // physics constants ////////////////////////////////////////////////////
@@ -65,7 +94,7 @@ const abs = x => (x < 0 ? -x : x);
 // electron spawning area / filament
 
 // postinions of several boundaries at dimensions tubeWidth * tubeHeight
-const ORIG_DATA = {
+export const ORIG_DATA = {
 	tubeWidth: 1920,
 	tubeHeight: 819,
 	eSpawnStartX: 288,
@@ -93,7 +122,7 @@ const ORIG_DATA = {
 };
 
 // declaration and initialization of boundary variables
-let {
+export let {
 	eSpawnStartX,
 	eSpawnStartY,
 	eSpawnEndX,
@@ -110,33 +139,33 @@ let {
 } = ORIG_DATA;
 
 // electron
-const ELECTRON_MASS = 9e-31;
-const ELECTRON_CHARGE = 1.6e-19;
-const ELECTRON_ACC_MIN = 0;
-const ELECTRON_ACC_MAX = 0.03;
-const ELECTRON_HIT_SPEED_DECLINE = 1 / 3;
-const ELECTRON_SPEED_ERROR = 3;
-const ranSpeedError = () =>
+export const ELECTRON_MASS = 9e-31;
+export const ELECTRON_CHARGE = 1.6e-19;
+export const ELECTRON_ACC_MIN = 0;
+export const ELECTRON_ACC_MAX = 0.03;
+export const ELECTRON_HIT_SPEED_DECLINE = 1 / 3;
+export const ELECTRON_SPEED_ERROR = 3;
+export const ranSpeedError = () =>
 	1 + Math.random() * 2 * ELECTRON_SPEED_ERROR - ELECTRON_SPEED_ERROR;
-const ELECTRON_MAX_BACKWARDS_SPEED = -0.5;
+export const ELECTRON_MAX_BACKWARDS_SPEED = -0.5;
 
 // grid
-const GRID_MAX = { mercury: 25, neon: 10 };
-let uGrid = 0;
+export const GRID_MAX = { mercury: 25, neon: 10 };
+export let uGrid = 0;
 
 // filament
-const FILAMENT_MAX = 10;
-let uFilament = 0;
+export const FILAMENT_MAX = 10;
+export let uFilament = 0;
 
-const COUNTER_VOLTAGE = 1.5;
-const COUNTER_FORCE = -0.01;
+export const COUNTER_VOLTAGE = 1.5;
+export const COUNTER_FORCE = -0.01;
 
-const AMPERAGE_MAX = { mercury: 500, neon: 200 };
-let curAmperage = 0;
+export const AMPERAGE_MAX = { mercury: 500, neon: 200 };
+export let curAmperage = 0;
 
 // mapping of grid voltage to amperage
 // the data is read from images and saved as a js obj in pointData.js
-const f = U => {
+export const f = U => {
 	// find the closest voltage in the sorted data set with binary search
 	let start = 0;
 	let stop = POINT_DATA[curMaterial].length - 1;
@@ -159,35 +188,35 @@ const f = U => {
 // design constants /////////////////////////////////////////////////////
 
 // electrons
-const ELECTRON_RADIUS = 2; //px
-const MAX_ELECTRONS = 1000;
-const MIN_ELECTRONS = 100; // when filament voltage is applied
-let curMaxElectrons = 0;
-let electrons = [];
+export const ELECTRON_RADIUS = 2; //px
+export const MAX_ELECTRONS = 1000;
+export const MIN_ELECTRONS = 100; // when filament voltage is applied
+export let curMaxElectrons = 0;
+export let electrons = [];
 
 // colors
-const ELECTRON_COLOR = "#4081e8";
-const CATHODE_GLOW_COLOR = "#e05c23";
-const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
+export const ELECTRON_COLOR = "#4081e8";
+export const CATHODE_GLOW_COLOR = "#e05c23";
+export const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
 
 // cathode glow
-const CATHODE_GLOW_MIN_RADIUS = 10;
-const CATHODE_GLOW_MAX_RADIUS = 50;
-let cathodeGlowRadius = 0;
-const CATHODE_GLOW_PADDING = 0.5;
-const CATHODE_CENTER_WIDTH = 0.05;
-const CATHODE_CENTER_HEIGHT = 0.12;
+export const CATHODE_GLOW_MIN_RADIUS = 10;
+export const CATHODE_GLOW_MAX_RADIUS = 50;
+export let cathodeGlowRadius = 0;
+export const CATHODE_GLOW_PADDING = 0.5;
+export const CATHODE_CENTER_WIDTH = 0.05;
+export const CATHODE_CENTER_HEIGHT = 0.12;
 
 // material glow constants
-const GLOW_OFFSET = { mercury: 0.2, neon: 0 };
-const GLOW_DISTANCE = { mercury: 4.9, neon: 2 };
-const GLOW_ERROR = 0.3;
-const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
-const GLOW_RADIUS = 10;
-const GLOW_FADE = 10;
-let glowAreas = [];
+export const GLOW_OFFSET = { mercury: 0.2, neon: 0 };
+export const GLOW_DISTANCE = { mercury: 4.9, neon: 2 };
+export const GLOW_ERROR = 0.3;
+export const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
+export const GLOW_RADIUS = 10;
+export const GLOW_FADE = 10;
+export let glowAreas = [];
 
-const recalculateGlowAreas = () => {
+export const recalculateGlowAreas = () => {
 	// calculate glow areas
 	// starting at first area
 	let curArea = GLOW_OFFSET[curMaterial] + GLOW_DISTANCE[curMaterial];
@@ -200,30 +229,30 @@ const recalculateGlowAreas = () => {
 };
 
 // Graph constants
-const GRAPH_STROKE = "blue";
-const GRAPH_SW = 2;
-const GRAPH_AXIS_STROKE = "white";
-const GRAPH_AXIS_SW = 2.5;
-const GRAPH_PADDING_HEIGHT = 0.15;
-const GRAPH_PADDING_WIDTH = 0.1;
-const GRAPH_X_AXIS_STEP = { mercury: 2.5, neon: 1.25 };
-const GRAPH_Y_AXIS_STEP = { mercury: 50, neon: 25 };
-const GRAPH_X_AXIS_LABEL_STEP = { mercury: 5, neon: 2.5 };
-const GRAPH_Y_AXIS_LABEL_STEP = { mercury: 100, neon: 50 };
-const GRAPH_AXIS_LINE_HEIGHT = 2;
-const GRAPH_AXIS_LINE_SW = 1.5;
-const GRAPH_AXIS_FONT_SIZE = 10;
-const GRAPH_ARROWTIP_LENGTH = 10;
-const GRAPH_CUR_POINT_COLOR = "#9a4aef";
-const GRAPH_CUR_POINT_SW = 4;
-const GRAPH_FRAMERATE = 30;
-const GRAPH_X_ACCURACY = { mercury: 300, neon: 500 };
-const GRAPH_POINTS_ARR_LEN = GRID_MAX.mercury * GRAPH_X_ACCURACY.mercury;
-const measuredPoints = new Array(GRAPH_POINTS_ARR_LEN);
-const addPoint = (x, y) => {
+export const GRAPH_STROKE = "blue";
+export const GRAPH_SW = 2;
+export const GRAPH_AXIS_STROKE = "white";
+export const GRAPH_AXIS_SW = 2.5;
+export const GRAPH_PADDING_HEIGHT = 0.15;
+export const GRAPH_PADDING_WIDTH = 0.1;
+export const GRAPH_X_AXIS_STEP = { mercury: 2.5, neon: 1.25 };
+export const GRAPH_Y_AXIS_STEP = { mercury: 50, neon: 25 };
+export const GRAPH_X_AXIS_LABEL_STEP = { mercury: 5, neon: 2.5 };
+export const GRAPH_Y_AXIS_LABEL_STEP = { mercury: 100, neon: 50 };
+export const GRAPH_AXIS_LINE_HEIGHT = 2;
+export const GRAPH_AXIS_LINE_SW = 1.5;
+export const GRAPH_AXIS_FONT_SIZE = 10;
+export const GRAPH_ARROWTIP_LENGTH = 10;
+export const GRAPH_CUR_POINT_COLOR = "#9a4aef";
+export const GRAPH_CUR_POINT_SW = 4;
+export const GRAPH_FRAMERATE = 30;
+export const GRAPH_X_ACCURACY = { mercury: 300, neon: 500 };
+export const GRAPH_POINTS_ARR_LEN = GRID_MAX.mercury * GRAPH_X_ACCURACY.mercury;
+export const measuredPoints = new Array(GRAPH_POINTS_ARR_LEN);
+export const addPoint = (x, y) => {
 	measuredPoints[Math.floor(x * GRAPH_X_ACCURACY[curMaterial])] = y;
 };
-const clearGraph = () => {
+export const clearGraph = () => {
 	for (let i = 0; i < GRAPH_POINTS_ARR_LEN; i++) {
 		delete measuredPoints[i];
 	}
@@ -239,18 +268,18 @@ const SPAN_UGRID = document.getElementById("uGrid-text-span");
 const SPAN_AMPERAGE = document.getElementById("amperage-text-span");
 const SPAN_UCOUNTER = document.getElementById("uCounter-text-span");
 
-filamentInput.setAttribute("max", FILAMENT_MAX);
+filamentInput.setAttribute("max", FILAMENT_MAX.toString());
 /////////////////////////////////////////////////////////////////////////
 
 // handle inputs ////////////////////////////////////////////////////////
-let curMaterial;
-let newEProb = 0;
-let uFilamentChanged = false;
-let resizing = false;
+export let curMaterial;
+export let newEProb = 0;
+export let uFilamentChanged = false;
+export let resizing = false;
 
 // sliders
-const handleFilamentInput = () => {
-	uFilament = Number(filamentInput.value);
+export const handleFilamentInput = () => {
+	uFilament = Number(filamentInput.nodeValue);
 	newEProb = uFilament / 40;
 	// adjust cathode glow radius based on uFilament
 	cathodeGlowRadius = map(
@@ -267,8 +296,8 @@ const handleFilamentInput = () => {
 	uFilamentChanged = !resizing;
 };
 
-const handleGridInput = () => {
-	uGrid = Number(gridInput.value);
+export const handleGridInput = () => {
+	uGrid = Number(gridInput.nodeValue);
 	curAmperage = f(uGrid);
 	addPoint(uGrid, curAmperage);
 	curMaxElectrons =
@@ -296,11 +325,15 @@ gridInput.addEventListener("input", handleGridInput);
 // radio group
 materialInputs.forEach(node => {
 	node.addEventListener("input", () => {
-		curMaterial = node.value;
+		curMaterial = node.nodeValue;
 		recalculateGlowAreas();
 		clearGraph();
 		gridInput.setAttribute("max", GRID_MAX[curMaterial]);
-		gridInput.value = constrain(gridInput.value, 0, GRID_MAX[curMaterial]);
+		gridInput.nodeValue = constrain(
+			Number(gridInput.nodeValue),
+			0,
+			GRID_MAX[curMaterial]
+		).toString();
 		handleGridInput();
 	});
 });
@@ -310,7 +343,7 @@ materialInputs[0].dispatchEvent(new Event("input"));
 
 // Positioning calculations /////////////////////////////////////////////
 // map tube and cathode areas to new dimensions
-const recalculateBoundaries = (w, h) => {
+export const recalculateBoundaries = (w, h) => {
 	const wFactor = w / ORIG_DATA.tubeWidth;
 	const hFactor = h / ORIG_DATA.tubeHeight;
 	// recalculate spawning area
@@ -345,7 +378,7 @@ const recalculateBoundaries = (w, h) => {
 	textFontSize = ORIG_DATA.textFontSize * avg(wFactor, hFactor);
 };
 
-const repositionSpans = () => {
+export const repositionSpans = () => {
 	SPAN_UFILAMENT.style.left =
 		(textPositions.uFilamentX - textPositions.width / 2).toString() + "px";
 	SPAN_UGRID.style.left =
@@ -366,6 +399,6 @@ const repositionSpans = () => {
 /////////////////////////////////////////////////////////////////////////
 
 // simulation loop //////////////////////////////////////////////////////
-const SIMULATION_TIMEOUT_MS = 10;
-const SIMULATION_TIMEOUT = SIMULATION_TIMEOUT_MS / 1000;
+export const SIMULATION_TIMEOUT_MS = 10;
+export const SIMULATION_TIMEOUT = SIMULATION_TIMEOUT_MS / 1000;
 /////////////////////////////////////////////////////////////////////////

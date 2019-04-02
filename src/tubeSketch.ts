@@ -1,10 +1,44 @@
+import p5 = require("p5");
+import {
+	hexToRgb,
+	CATHODE_GLOW_COLOR,
+	ELECTRON_COLOR,
+	ELECTRON_RADIUS,
+	electrons,
+	eRightBound,
+	eLeftBound,
+	eBottomBound,
+	eTopBound,
+	GLOW_COLOR,
+	curMaterial,
+	GLOW_FADE,
+	GLOW_RADIUS,
+	eSpawnStartX,
+	CATHODE_GLOW_PADDING,
+	eSpawnWidth,
+	eSpawnStartY,
+	eSpawnHeight,
+	eSpawnEndX,
+	eSpawnEndY,
+	CATHODE_CENTER_WIDTH,
+	CATHODE_CENTER_HEIGHT,
+	distanceToRect,
+	map,
+	cathodeGlowRadius,
+	uFilament,
+	FILAMENT_MAX,
+	constrain,
+	recalculateBoundaries,
+	debounce
+} from "./base";
+
 // tubeSketch.js
 // p5.js sketch file for the tube
 
 // destruct color into rgb values for later use
 const { r: cr, g: cg, b: cb } = hexToRgb(CATHODE_GLOW_COLOR);
 
-const tubeSketch = function(p) {
+const tubeSketch = function(p: p5) {
 	// Drawing methods ////////////////////////////////////////////////////////////////////////////
 	p.drawElectrons = () => {
 		p.stroke(ELECTRON_COLOR);
@@ -174,9 +208,15 @@ const tubeSketch = function(p) {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 };
 
-const tubeP5 = new p5(tubeSketch, "#tube-canvas-container");
-const scheduleCathodeRedraw = debounce(() => (tubeP5.cathodeDrawn = false), 5);
+const tubeP5 = new p5(
+	tubeSketch,
+	document.getElementById("#tube-canvas-container")
+);
+export const scheduleCathodeRedraw = debounce(
+	() => (tubeP5.cathodeDrawn = false),
+	5
+);
 
-function scheduleGlow(x, y) {
+export function scheduleGlow(x, y) {
 	tubeP5.glow(x, y);
 }

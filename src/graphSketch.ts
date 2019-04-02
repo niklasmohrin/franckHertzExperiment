@@ -1,3 +1,33 @@
+import {
+	GRAPH_AXIS_STROKE,
+	GRAPH_AXIS_SW,
+	GRAPH_PADDING_WIDTH,
+	GRAPH_SW,
+	GRAPH_PADDING_HEIGHT,
+	GRAPH_ARROWTIP_LENGTH,
+	GRAPH_AXIS_LINE_SW,
+	GRAPH_X_AXIS_STEP,
+	GRAPH_AXIS_LINE_HEIGHT,
+	GRAPH_X_AXIS_LABEL_STEP,
+	GRAPH_Y_AXIS_STEP,
+	GRAPH_Y_AXIS_LABEL_STEP,
+	GRAPH_X_ACCURACY,
+	measuredPoints,
+	GRAPH_CUR_POINT_COLOR,
+	GRAPH_CUR_POINT_SW,
+	clearGraph,
+	GRAPH_STROKE,
+	GRAPH_FRAMERATE,
+	GRID_MAX,
+	AMPERAGE_MAX,
+	f,
+	textFontSize,
+	curMaterial,
+	map,
+	uGrid
+} from "./base";
+import p5 = require("p5");
+
 // graphSketch.js
 // p5.js sketch file for the graph
 
@@ -212,4 +242,7 @@ const graphSketch = p => {
 	};
 };
 
-const graphP5 = new p5(graphSketch, "#graph-canvas-container");
+const graphP5 = new p5(
+	graphSketch,
+	document.getElementById("#graph-canvas-container")
+);

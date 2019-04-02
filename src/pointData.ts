@@ -1,5 +1,5 @@
 // neon mercury
-const POINT_DATA = {};
+const POINT_DATA: {mercury: number[][], neon: number[][]} = {mercury: [], neon: []};
 // first line is list of materials
 
 // bulk saiving of voltage - amperage pairs

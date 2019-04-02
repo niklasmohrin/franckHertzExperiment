@@ -1,9 +1,35 @@
+import {
+	eSpawnWidth,
+	eSpawnStartX,
+	eSpawnHeight,
+	eSpawnStartY,
+	gridX,
+	map,
+	uGrid,
+	GLOW_DISTANCE,
+	curMaterial,
+	abs,
+	ELECTRON_HIT_SPEED_DECLINE,
+	ELECTRON_MAX_BACKWARDS_SPEED,
+	eRightBound
+} from "./base";
+
+import { scheduleGlow } from "./tubeSketch";
+
 // ParticleElectron.js
 
 class ParticleElectron {
-	constructor(_x, _y) {
-		this.x = _x || Math.floor(Math.random() * eSpawnWidth) + eSpawnStartX;
-		this.y = _y || Math.floor(Math.random() * eSpawnHeight) + eSpawnStartY;
+	public vx: number;
+	public vy: number;
+	public ax: number;
+	public ay: number;
+	public timesHit: number;
+	public update: () => void;
+	public accelerate: (_ax: number, _ay: number) => void;
+	constructor(
+		public x: number = Math.floor(Math.random() * eSpawnWidth) + eSpawnStartX,
+		public y: number = Math.floor(Math.random() * eSpawnHeight) + eSpawnStartY
+	) {
 		this.vx = this.vy = this.ax = this.ay = 0;
 		this.timesHit = 0;
 	}
