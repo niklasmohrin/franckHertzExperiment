@@ -4,7 +4,6 @@ import {
 	CATHODE_GLOW_COLOR,
 	ELECTRON_COLOR,
 	ELECTRON_RADIUS,
-	electrons,
 	eRightBound,
 	eLeftBound,
 	eBottomBound,
@@ -24,7 +23,6 @@ import {
 	CATHODE_CENTER_HEIGHT,
 	distanceToRect,
 	map,
-	cathodeGlowRadius,
 	uFilament,
 	FILAMENT_MAX,
 	constrain,
@@ -32,6 +30,10 @@ import {
 	debounce,
 	Rectangle
 } from "./base";
+import { ParticleElectron } from "./ParticleElectron";
+
+declare let electrons: ParticleElectron[];
+declare let cathodeGlowRadius: number;
 
 // tubeSketch.js
 // p5.js sketch file for the tube
@@ -47,7 +49,7 @@ export interface Glow {
 
 export class TubeSketch {
 	// Drawing methods ////////////////////////////////////////////////////////////////////////////
-	drawElectrons = (p: p5) => {
+	static drawElectrons = (p: p5) => {
 		p.stroke(ELECTRON_COLOR);
 		p.strokeWeight(ELECTRON_RADIUS);
 		p.fill(ELECTRON_COLOR);
@@ -63,7 +65,7 @@ export class TubeSketch {
 		}
 	};
 
-	drawGlows = (p: p5) => {
+	static drawGlows = (p: p5) => {
 		p.noStroke();
 		const c = p.color(GLOW_COLOR[curMaterial]);
 		for (let i = TubeSketch.glows.length - 1; i > -1; i--) {
@@ -79,9 +81,9 @@ export class TubeSketch {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Cathode Drawing ////////////////////////////////////////////////////////////////////////////
-	cathodeCnvReset = (p: p5) => {
+	static cathodeCnvReset = (p: p5) => {
 		// recalculate dimensions of the cathode canvas
-		this.cathodeCnvRect = {
+		TubeSketch.cathodeCnvRect = {
 			min: {
 				x: Math.floor(eSpawnStartX - CATHODE_GLOW_PADDING * eSpawnWidth),
 				y: Math.floor(eSpawnStartY - CATHODE_GLOW_PADDING * eSpawnHeight)
@@ -93,22 +95,22 @@ export class TubeSketch {
 		};
 
 		// recreate cathode canvas
-		delete this.cathodeCnv;
+		delete TubeSketch.cathodeCnv;
 		document.body.removeChild(document.body.lastChild);
-		const w = this.cathodeCnvRect.max.x - this.cathodeCnvRect.min.x;
-		const h = this.cathodeCnvRect.max.y - this.cathodeCnvRect.min.y;
-		this.cathodeCnv = p.createGraphics(w, h);
+		const w = TubeSketch.cathodeCnvRect.max.x - TubeSketch.cathodeCnvRect.min.x;
+		const h = TubeSketch.cathodeCnvRect.max.y - TubeSketch.cathodeCnvRect.min.y;
+		TubeSketch.cathodeCnv = p.createGraphics(w, h);
 
 		// setup for drawing
-		this.cathodeCnv.loadPixels();
-		this.cathodeCnv.pixelDensity(1);
+		TubeSketch.cathodeCnv.loadPixels();
+		TubeSketch.cathodeCnv.pixelDensity(1);
 
 		// draw the canvas
-		this.redrawCathodeGlow(p);
+		TubeSketch.redrawCathodeGlow(p);
 	};
 
-	redrawCathodeGlow = (p: p5) => {
-		const cnv = this.cathodeCnv;
+	static redrawCathodeGlow = (p: p5) => {
+		const cnv = TubeSketch.cathodeCnv;
 		const cathodeCenter = {
 			min: {
 				x: cnv.width / 2 - eSpawnWidth * CATHODE_CENTER_WIDTH,
@@ -152,32 +154,35 @@ export class TubeSketch {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	// tubeP5 reset, setup and draw; glow scheduler ///////////////////////////////////////////////
-	reset = (p: p5) => {
+	static reset = (p: p5) => {
 		p.noLoop();
 		// delete old and create new canvas
-		delete this.tubeCnv;
-		this.tubeCnv = p.createCanvas(
-			this.parent.clientWidth,
-			this.parent.clientHeight
+		delete TubeSketch.tubeCnv;
+		TubeSketch.tubeCnv = p.createCanvas(
+			TubeSketch.parent.clientWidth,
+			TubeSketch.parent.clientHeight
 		);
-		this.tubeCnv.parent(this.parent);
-		this.tubeCnv.id("tube-canvas");
+		TubeSketch.tubeCnv.parent(TubeSketch.parent);
+		TubeSketch.tubeCnv.id("tube-canvas");
 
 		// recalculate spawning area, boundaries and grid position
-		recalculateBoundaries(this.parent.clientWidth, this.parent.clientHeight);
+		recalculateBoundaries(
+			TubeSketch.parent.clientWidth,
+			TubeSketch.parent.clientHeight
+		);
 
 		// recalculate electron positions
 		electrons.forEach(e => {
-			e.x *= this.parent.clientWidth / this.prevWidth;
-			e.y *= this.parent.clientHeight / this.prevHeight;
+			e.x *= TubeSketch.parent.clientWidth / TubeSketch.prevWidth;
+			e.y *= TubeSketch.parent.clientHeight / TubeSketch.prevHeight;
 		});
 
 		// keep track of old size for next resize event
-		this.prevWidth = this.parent.clientWidth;
-		this.prevHeight = this.parent.clientHeight;
+		TubeSketch.prevWidth = TubeSketch.parent.clientWidth;
+		TubeSketch.prevHeight = TubeSketch.parent.clientHeight;
 
 		// reset cathode glow canvas
-		this.cathodeCnvReset(p);
+		TubeSketch.cathodeCnvReset(p);
 
 		// vanish canvas
 		p.background(0);
@@ -187,27 +192,27 @@ export class TubeSketch {
 		p.loop();
 	};
 
-	setup = (p: p5) => {
+	static setup = (p: p5) => {
 		p.noLoop();
-		// this.parent = window.document.getElementById("tube-canvas-container");
+		// TubeSketch.parent = window.document.getElementById("tube-canvas-container");
 		TubeSketch.glows = [];
 		// initial reset
-		this.reset(p);
+		TubeSketch.reset(p);
 	};
 
-	draw = (p: p5) => {
+	static draw = (p: p5) => {
 		p.clear();
-		this.drawElectrons(p);
+		TubeSketch.drawElectrons(p);
 		if (!TubeSketch.cathodeDrawn || p.frameCount % 10 === 0) {
-			this.redrawCathodeGlow(p);
+			TubeSketch.redrawCathodeGlow(p);
 		}
 		// draw cathode glow
 		p.image(
-			this.cathodeCnv,
-			this.cathodeCnvRect.min.x,
-			this.cathodeCnvRect.min.y
+			TubeSketch.cathodeCnv,
+			TubeSketch.cathodeCnvRect.min.x,
+			TubeSketch.cathodeCnvRect.min.y
 		);
-		this.drawGlows(p);
+		TubeSketch.drawGlows(p);
 	};
 
 	static glow = (p: p5, x, y) => {
@@ -219,20 +224,19 @@ export class TubeSketch {
 		});
 	};
 	static glows: Glow[];
-	cathodeCnvRect: Rectangle;
-	cathodeCnv: any;
+	static cathodeCnvRect: Rectangle;
+	static cathodeCnv: any;
 	static cathodeDrawn: boolean;
-	tubeCnv: any;
-	parent: any;
-	prevWidth: any;
-	prevHeight: any;
+	static tubeCnv: any;
+	static parent: any;
+	static prevWidth: any;
+	static prevHeight: any;
 }
 
 export const tubeP5 = new p5(p => {
-	const tubeSketch = new TubeSketch();
 	p.preload = () => {};
-	p.setup = tubeSketch.reset;
-	p.draw = tubeSketch.draw;
+	p.setup = () => TubeSketch.reset(p);
+	p.draw = () => TubeSketch.draw(p);
 }, document.getElementById("#tube-canvas-container"));
 
 export const scheduleCathodeRedraw = debounce(
