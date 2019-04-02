@@ -12,8 +12,11 @@
 	},
 	"author": "Niklas Mohrin",
 	"devDependencies": {
+		"@types/p5": "^0.7.2",
 		"electron": "^4.0.4",
-		"electron-builder": "^20.38.5"
+		"electron-builder": "^20.38.5",
+		"ts-loader": "^5.3.3",
+		"typescript": "^3.4.1"
 	},
 	"build": {
 		"appId": "com.niklasmohrin.franckHertz",
