@@ -1,6 +1,26 @@
+import { ParticleElectron } from "./ParticleElectron";
+import {
+	map,
+	GRID_MAX,
+	ELECTRON_ACC_MIN,
+	ELECTRON_ACC_MAX,
+	gridX,
+	ranSpeedError,
+	COUNTER_FORCE,
+	eRightBound,
+	eLeftBound,
+	eBottomBound,
+	eTopBound
+} from "./base";
+
 // simulation.js
 
-const simulation = () => {
+declare let electrons: ParticleElectron[];
+declare let curMaxElectrons: number;
+declare let newEProb: number;
+declare let uGrid: number;
+
+export const simulation = () => {
 	// adds an electron sometimes
 	if (electrons.length < curMaxElectrons && Math.random() < newEProb) {
 		electrons.push(new ParticleElectron());
