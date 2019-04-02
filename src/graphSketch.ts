@@ -31,8 +31,8 @@ import p5 = require("p5");
 // graphSketch.js
 // p5.js sketch file for the graph
 
-const graphSketch = p => {
-	p.drawDiagram = () => {
+export class GraphSketch {
+	static drawDiagram = (p: p5) => {
 		p.background(0);
 
 		// set color
@@ -150,7 +150,7 @@ const graphSketch = p => {
 	};
 
 	// map the voltage to coordinates on the canvas
-	p.mapToCnv = _x => {
+	static mapToCnv = (p: p5, _x: number) => {
 		const x = map(
 			_x / GRAPH_X_ACCURACY[curMaterial],
 			0,
@@ -170,14 +170,14 @@ const graphSketch = p => {
 	};
 
 	// draw the actual curve
-	p.drawGraph = () => {
+	static drawGraph = (p: p5) => {
 		p.beginShape();
 		for (
 			let _x = 0;
 			_x < GRID_MAX[curMaterial] * GRAPH_X_ACCURACY[curMaterial];
 			_x++
 		) {
-			const [x, y] = p.mapToCnv(_x);
+			const [x, y] = GraphSketch.mapToCnv(p, _x);
 			p.vertex(x, y);
 		}
 		p.endShape();
@@ -185,7 +185,7 @@ const graphSketch = p => {
 	};
 
 	// highlight the current position / voltage
-	p.drawCurPoint = () => {
+	static drawCurPoint = (p: p5) => {
 		p.stroke(GRAPH_CUR_POINT_COLOR);
 		p.strokeWeight(GRAPH_CUR_POINT_SW);
 		p.noFill();
@@ -206,43 +206,53 @@ const graphSketch = p => {
 		p.point(x, y);
 	};
 
-	p.reset = () => {
+	static reset = (p: p5) => {
 		p.noLoop();
-		p.graphCnv = p.createCanvas(p.parent.clientWidth, p.parent.clientHeight);
-		p.graphCnv.parent(p.parent);
-		p.graphCnv.id("graph-canvas");
+		GraphSketch.graphCnv = p.createCanvas(
+			GraphSketch.parent.clientWidth,
+			GraphSketch.parent.clientHeight
+		);
+		GraphSketch.graphCnv.parent(GraphSketch.parent);
+		GraphSketch.graphCnv.id("graph-canvas");
 		p.pixelDensity(1);
-		p.graphCnv.mousePressed(clearGraph);
+		GraphSketch.graphCnv.mousePressed(clearGraph);
 
-		p.drawDiagram();
+		GraphSketch.drawDiagram(p);
 
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
 
-		p.drawGraph();
+		GraphSketch.drawGraph(p);
 
-		p.prevWidth = p.parent.clientWidth;
-		p.prevHeight = p.parent.clientHeight;
+		GraphSketch.prevWidth = GraphSketch.parent.clientWidth;
+		GraphSketch.prevHeight = GraphSketch.parent.clientHeight;
 
 		p.frameRate(GRAPH_FRAMERATE);
 		p.loop();
 	};
 
-	p.setup = () => {
-		p.parent = window.document.getElementById("graph-canvas-container");
-		p.reset();
+	static setup = (p: p5) => {
+		GraphSketch.parent = window.document.getElementById(
+			"graph-canvas-container"
+		);
+		GraphSketch.reset(p);
 	};
 
-	p.draw = () => {
-		p.drawDiagram();
+	static draw = (p: p5) => {
+		GraphSketch.drawDiagram(p);
 		p.stroke(GRAPH_STROKE);
 		p.strokeWeight(GRAPH_SW);
-		p.drawGraph();
-		p.drawCurPoint();
+		GraphSketch.drawGraph(p);
+		GraphSketch.drawCurPoint(p);
 	};
-};
+	static graphCnv: p5.Renderer;
+	static parent: any;
+	static prevWidth: any;
+	static prevHeight: any;
+}
 
-const graphP5 = new p5(
-	graphSketch,
-	document.getElementById("#graph-canvas-container")
-);
+export const graphP5 = new p5((p: p5) => {
+	p.preload = () => {};
+	p.setup = () => GraphSketch.setup(p);
+	p.draw = () => GraphSketch.draw(p);
+}, document.getElementById("#graph-canvas-container"));
