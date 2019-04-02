@@ -3,7 +3,8 @@
 		"module": "commonjs",
 		"allowJs": false,
 		"alwaysStrict": true,
-		"outDir": "./dist/"
+		"outDir": "./app/src/",
+		"moduleResolution": "node"
 	},
 	"exclude": ["node_modules"],
 	"include": ["src/**/*"]

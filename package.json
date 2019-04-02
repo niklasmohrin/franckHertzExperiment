@@ -2,7 +2,7 @@
 	"name": "franckhertz",
 	"version": "1.0.0",
 	"description": "Franck Hertz Versuch in Electron",
-	"main": "./app/src/main.js",
+	"main": "./app/src/electron-app.js",
 	"scripts": {
 		"start": "electron .",
 		"package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",

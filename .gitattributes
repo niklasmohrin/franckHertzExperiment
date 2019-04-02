@@ -1,4 +1,5 @@
 release-builds/* linguist-generated
 dist/* linguist-generated
-app/src/pointData.js linguist-generated
+app/**/*.js linguist-generated
 app/lib/* linguist-vendor
+src/pointData.ts linguist-generated
