@@ -18,7 +18,7 @@ import { scheduleGlow } from "./tubeSketch";
 
 // ParticleElectron.js
 
-class ParticleElectron {
+export class ParticleElectron {
 	public vx: number;
 	public vy: number;
 	public ax: number;

@@ -1,6 +1,6 @@
 // base.js
 
-import { scheduleCathodeRedraw, scheduleGlow } from "./tubeSketch";
+import { scheduleCathodeRedraw } from "./tubeSketch";
 
 // util functions ///////////////////////////////////////////////////////
 export function map(
@@ -51,7 +51,7 @@ export function debounce(
 	func: Function,
 	wait: number,
 	immediate?: boolean
-): Function {
+): (...args: any[]) => any {
 	let timeout;
 	return function() {
 		const context = this,
@@ -191,8 +191,8 @@ export const f = U => {
 export const ELECTRON_RADIUS = 2; //px
 export const MAX_ELECTRONS = 1000;
 export const MIN_ELECTRONS = 100; // when filament voltage is applied
-export let curMaxElectrons = 0;
-export let electrons = [];
+let curMaxElectrons = 0;
+let electrons = [];
 
 // colors
 export const ELECTRON_COLOR = "#4081e8";
@@ -202,7 +202,7 @@ export const GLOW_COLOR = { mercury: "#9f40e8", neon: "#ed6517" };
 // cathode glow
 export const CATHODE_GLOW_MIN_RADIUS = 10;
 export const CATHODE_GLOW_MAX_RADIUS = 50;
-export let cathodeGlowRadius = 0;
+let cathodeGlowRadius = 0;
 export const CATHODE_GLOW_PADDING = 0.5;
 export const CATHODE_CENTER_WIDTH = 0.05;
 export const CATHODE_CENTER_HEIGHT = 0.12;
@@ -214,7 +214,7 @@ export const GLOW_ERROR = 0.3;
 export const ranGlowError = () => Math.random() * 2 * GLOW_ERROR - GLOW_ERROR;
 export const GLOW_RADIUS = 10;
 export const GLOW_FADE = 10;
-export let glowAreas = [];
+let glowAreas = [];
 
 export const recalculateGlowAreas = () => {
 	// calculate glow areas
@@ -266,16 +266,17 @@ const gridInput = document.getElementById("grid");
 const SPAN_UFILAMENT = document.getElementById("uFilament-text-span");
 const SPAN_UGRID = document.getElementById("uGrid-text-span");
 const SPAN_AMPERAGE = document.getElementById("amperage-text-span");
-const SPAN_UCOUNTER = document.getElementById("uCounter-text-span");
+export const SPAN_UCOUNTER = document.getElementById("uCounter-text-span");
 
 filamentInput.setAttribute("max", FILAMENT_MAX.toString());
 /////////////////////////////////////////////////////////////////////////
 
 // handle inputs ////////////////////////////////////////////////////////
-export let curMaterial;
+type Material = "mercury" | "neon";
+export let curMaterial: Material;
 export let newEProb = 0;
 export let uFilamentChanged = false;
-export let resizing = false;
+let resizing = false;
 
 // sliders
 export const handleFilamentInput = () => {
@@ -325,10 +326,10 @@ gridInput.addEventListener("input", handleGridInput);
 // radio group
 materialInputs.forEach(node => {
 	node.addEventListener("input", () => {
-		curMaterial = node.nodeValue;
+		curMaterial = <Material>node.nodeValue;
 		recalculateGlowAreas();
 		clearGraph();
-		gridInput.setAttribute("max", GRID_MAX[curMaterial]);
+		gridInput.setAttribute("max", GRID_MAX[curMaterial].toString());
 		gridInput.nodeValue = constrain(
 			Number(gridInput.nodeValue),
 			0,
