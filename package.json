@@ -15,6 +15,7 @@
 		"electron": "^4.0.4",
 		"electron-builder": "^20.38.5"
 	},
+	"license": "AGPL-3.0-or-later",
 	"build": {
 		"appId": "com.niklasmohrin.franckHertz",
 		"copyright": "Copyright © 2019 Niklas Mohrin",
