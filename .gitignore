@@ -6,3 +6,4 @@ app/assets/*
 !app/assets/hg.png
 .vscode/
 build/
+*.pfx

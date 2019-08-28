@@ -78,16 +78,15 @@ const tubeSketch = function(p) {
 		const h = p.cathodeCnvRect.max.y - p.cathodeCnvRect.min.y;
 		p.cathodeCnv = p.createGraphics(w, h);
 
-		// setup for drawing
-		p.cathodeCnv.loadPixels();
-		p.cathodeCnv.pixelDensity(1);
-
 		// draw the canvas
 		p.redrawCathodeGlow();
 	};
 
 	p.redrawCathodeGlow = () => {
+		// setup for drawing
 		const cnv = p.cathodeCnv;
+		cnv.loadPixels();
+		cnv.pixelDensity(1);
 		const cathodeCenter = {
 			min: {
 				x: cnv.width / 2 - eSpawnWidth * CATHODE_CENTER_WIDTH,

@@ -1,6 +1,6 @@
 {
 	"name": "franckhertz",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Franck Hertz Versuch in Electron",
 	"main": "./app/src/main.js",
 	"scripts": {
@@ -8,7 +8,7 @@
 		"package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
 		"package-win": "electron-packager . franckHertzVersuch --overwrite --asar --platform=win32 --arch=all --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Franck Hertz Versuch\"",
 		"package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
-		"dist": "build -w --x64 --ia32"
+		"dist": "electron-builder"
 	},
 	"author": "Niklas Mohrin",
 	"devDependencies": {
