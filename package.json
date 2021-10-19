@@ -16,15 +16,15 @@
         "url": "git://github.com/niklasmohrin/franckHertzExperiment.git"
     },
     "devDependencies": {
-        "electron": "^9.1.0",
-        "electron-builder": "^20.38.5"
+        "electron": "^15.2.0",
+        "electron-builder": "^22.13.1"
     },
     "license": "AGPL-3.0-or-later",
     "build": {
         "appId": "com.niklasmohrin.franckHertz",
         "copyright": "Copyright © 2020 Niklas Mohrin",
         "productName": "Franck Hertz Versuch",
-        "electronVersion": "9.1.0",
+        "electronVersion": "15.2.0",
         "win": {
             "target": [
                 "portable"
